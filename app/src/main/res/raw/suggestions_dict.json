@@ -1,0 +1,21 @@
+{
+  "hel": ["hello", "help", "held"],
+  "wor": ["world", "word", "work", "worry"],
+  "the": ["the", "them", "then", "they", "there"],
+  "and": ["and", "android", "another"],
+  "tha": ["that", "than", "thanks", "thankful"],
+  "thi": ["this", "thing", "think", "third"],
+  "you": ["you", "your", "yourself", "youth"],
+  "wit": ["with", "within", "without", "witness"],
+  "hav": ["have", "having", "hasn't"],
+  "wha": ["what", "whatever", "whats"],
+  "fro": ["from", "front", "frog", "frost"],
+  "jus": ["just", "justice", "justify"],
+  "ple": ["please", "plenty", "pleasure"],
+  "can": ["can", "cannot", "cancel", "candy"],
+  "goo": ["good", "google", "goodbye", "goodness"],
+  "sor": ["sorry", "sort", "source"],
+  "tim": ["time", "timer", "times", "timing"],
+  "lik": ["like", "likely", "likes", "liked"],
+  "kno": ["know", "knowledge", "known", "knows"]
+}

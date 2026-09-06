@@ -1,0 +1,18 @@
+<?xml version="1.0" encoding="utf-8"?>
+<!--
+    Layout for the key press preview popup.
+    Android's KeyboardView inflates this automatically on key press.
+-->
+<TextView
+    xmlns:android="http://schemas.android.com/apk/res/android"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent"
+    android:gravity="center"
+    android:textSize="22sp"
+    android:textColor="#FFFFFF"
+    android:textStyle="bold"
+    android:background="@drawable/key_preview_background"
+    android:paddingStart="8dp"
+    android:paddingEnd="8dp"
+    android:paddingTop="4dp"
+    android:paddingBottom="4dp"/>

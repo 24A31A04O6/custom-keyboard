@@ -1,0 +1,633 @@
+<?xml version="1.0" encoding="utf-8"?>
+<!--
+    keyboard_view.xml â€” Root layout returned by onCreateInputView().
+
+    Structure:
+    â”Œâ”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”
+    â”‚  keyboard_root (LinearLayout, vertical)                 â”‚
+    â”‚  â”Œâ”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”  â”‚
+    â”‚  â”‚  toolbar_strip (7 fixed icons, always visible)    â”‚  â”‚
+    â”‚  â”œâ”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”¤  â”‚
+    â”‚  â”‚  banners / voice panel / OTP / grammar (GONE)     â”‚  â”‚
+    â”‚  â”œâ”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”¤  â”‚
+    â”‚  â”‚  suggestion_scroll                                â”‚  â”‚
+    â”‚  â”œâ”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”¤  â”‚
+    â”‚  â”‚  content_flipper (ViewFlipper)                    â”‚  â”‚
+    â”‚  â”‚  â”Œâ”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”  child 0 = keyboard_view    â”‚  â”‚
+    â”‚  â”‚  â”‚  child 1 = emoji â”‚  child 2 = gif placeholder  â”‚  â”‚
+    â”‚  â”‚  â”‚  child 3 = theme â”‚  child 4 = settings panel   â”‚  â”‚
+    â”‚  â”‚  â””â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”˜                              â”‚  â”‚
+    â”‚  â””â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”˜  â”‚
+    â””â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”˜
+    The trackpad overlay sits in the outer FrameLayout on top of everything.
+-->
+<FrameLayout
+    xmlns:android="http://schemas.android.com/apk/res/android"
+    android:layout_width="match_parent"
+    android:layout_height="wrap_content"
+    android:paddingBottom="0dp">
+
+    <!-- â•â• MAIN KEYBOARD ROOT â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â• -->
+    <LinearLayout
+        android:id="@+id/keyboard_root"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:orientation="vertical"
+        android:paddingBottom="0dp"
+        android:background="#1E1F22">
+
+        <!-- â”€â”€ TOOLBAR STRIP â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€ -->
+        <!--
+            Fixed 7-icon strip. Each icon is a TextView (emoji glyph) so we
+            don't need vector drawable resources. The service wires click listeners.
+            IDs: btn_tool_*, see MyKeyboardService.rebuildToolbar() still handles
+            the old scrollable toolbar_row â€” this strip is NEW and separate.
+        -->
+        <LinearLayout
+            android:id="@+id/toolbar_strip"
+            android:layout_width="match_parent"
+            android:layout_height="36dp"
+            android:orientation="horizontal"
+            android:background="#1E1F22"
+            android:gravity="center_vertical">
+
+            <!-- Grid / panel switcher -->
+            <ImageView
+                android:id="@+id/btn_tool_grid"
+                android:layout_width="0dp"
+                android:layout_height="22dp"
+                android:layout_weight="1"
+                android:src="@drawable/ic_tool_grid"
+                android:scaleType="fitCenter"
+                android:tint="#B8BEC7"
+                android:clickable="true"
+                android:focusable="true"
+                android:background="?android:attr/selectableItemBackground"
+                android:padding="4dp"/>
+
+            <!-- Stickers -->
+            <ImageView
+                android:id="@+id/btn_tool_sticker"
+                android:layout_width="0dp"
+                android:layout_height="22dp"
+                android:layout_weight="1"
+                android:src="@drawable/ic_sticker"
+                android:scaleType="fitCenter"
+                android:tint="#B8BEC7"
+                android:clickable="true"
+                android:focusable="true"
+                android:background="?android:attr/selectableItemBackground"
+                android:padding="4dp"/>
+
+            <!-- Settings -->
+            <ImageView
+                android:id="@+id/btn_tool_settings"
+                android:layout_width="0dp"
+                android:layout_height="22dp"
+                android:layout_weight="1"
+                android:src="@drawable/ic_tool_settings"
+                android:scaleType="fitCenter"
+                android:tint="#B8BEC7"
+                android:clickable="true"
+                android:focusable="true"
+                android:background="?android:attr/selectableItemBackground"
+                android:padding="4dp"/>
+
+            <!-- Translate -->
+            <ImageView
+                android:id="@+id/btn_tool_translate"
+                android:layout_width="0dp"
+                android:layout_height="22dp"
+                android:layout_weight="1"
+                android:src="@drawable/ic_tool_translate"
+                android:scaleType="fitCenter"
+                android:tint="#B8BEC7"
+                android:clickable="true"
+                android:focusable="true"
+                android:background="?android:attr/selectableItemBackground"
+                android:padding="4dp"/>
+
+            <!-- Theme / palette -->
+            <ImageView
+                android:id="@+id/btn_tool_theme"
+                android:layout_width="0dp"
+                android:layout_height="22dp"
+                android:layout_weight="1"
+                android:src="@drawable/ic_tool_palette"
+                android:scaleType="fitCenter"
+                android:tint="#B8BEC7"
+                android:clickable="true"
+                android:focusable="true"
+                android:background="?android:attr/selectableItemBackground"
+                android:padding="4dp"/>
+
+            <!-- Mic / Voice input -->
+            <ImageView
+                android:id="@+id/btn_tool_mic"
+                android:layout_width="0dp"
+                android:layout_height="22dp"
+                android:layout_weight="1"
+                android:src="@drawable/ic_tool_mic"
+                android:scaleType="fitCenter"
+                android:tint="#B8BEC7"
+                android:clickable="true"
+                android:focusable="true"
+                android:background="?android:attr/selectableItemBackground"
+                android:padding="4dp"/>
+
+        </LinearLayout>
+        <!-- End toolbar_strip -->
+
+
+
+
+        <!-- â”€â”€ Legacy scrollable toolbar_row (kept for backward compat) â”€â”€â”€â”€â”€â”€â”€â”€ -->
+        <HorizontalScrollView
+            android:id="@+id/toolbar_scroll_legacy"
+            android:layout_width="match_parent"
+            android:layout_height="0dp"
+            android:visibility="gone"
+            android:scrollbars="none">
+            <LinearLayout
+                android:id="@+id/toolbar_row"
+                android:layout_width="wrap_content"
+                android:layout_height="match_parent"
+                android:orientation="horizontal"
+                android:gravity="center_vertical"/>
+        </HorizontalScrollView>
+
+        <!-- â”€â”€ OTP BANNER â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€ -->
+        <LinearLayout
+            android:id="@+id/otp_banner"
+            android:layout_width="match_parent"
+            android:layout_height="36dp"
+            android:orientation="horizontal"
+            android:background="#FFF3CD"
+            android:gravity="center_vertical"
+            android:paddingStart="12dp"
+            android:paddingEnd="8dp"
+            android:visibility="gone">
+
+            <TextView
+                android:id="@+id/otp_text"
+                android:layout_width="0dp"
+                android:layout_height="wrap_content"
+                android:layout_weight="1"
+                android:text="OTP: 123456 â€” Tap to paste"
+                android:textSize="13sp"
+                android:textColor="#856404"
+                android:textStyle="bold"/>
+
+            <Button
+                android:id="@+id/btn_otp_paste"
+                android:layout_width="wrap_content"
+                android:layout_height="28dp"
+                android:text="Paste"
+                android:textSize="11sp"
+                android:textColor="#FFFFFF"
+                android:backgroundTint="#FF8C00"
+                android:paddingStart="10dp"
+                android:paddingEnd="10dp"/>
+
+            <Button
+                android:id="@+id/btn_otp_dismiss"
+                android:layout_width="wrap_content"
+                android:layout_height="28dp"
+                android:text="✖"
+                android:textSize="11sp"
+                android:textColor="#856404"
+                android:background="@android:color/transparent"
+
+                android:paddingStart="6dp"
+                android:paddingEnd="6dp"/>
+
+        </LinearLayout>
+
+        <!-- ── VOICE TYPING PANEL ────────────────────────────────────────── -->
+        <LinearLayout
+            android:id="@+id/voice_typing_panel"
+            android:layout_width="match_parent"
+            android:layout_height="56dp"
+            android:orientation="horizontal"
+            android:gravity="center_vertical"
+            android:background="#1E1F22"
+            android:paddingStart="12dp"
+            android:paddingEnd="12dp"
+            android:visibility="gone">
+
+            <ImageView 
+                android:contentDescription="Exit voice input" 
+                android:id="@+id/btn_voice_back" 
+                android:layout_height="32dp" 
+                android:layout_width="32dp" 
+                android:src="@drawable/arrow_back_24"
+                android:background="?android:attr/selectableItemBackground"
+                android:tint="#FFFFFF"
+                android:padding="4dp"/>
+
+            <TextView
+                android:id="@+id/voice_status_text"
+                android:layout_width="0dp"
+                android:layout_height="match_parent"
+                android:layout_weight="1"
+                android:gravity="center_vertical"
+                android:paddingStart="16dp"
+                android:text="Speak now"
+                android:textSize="16sp"
+                android:textColor="#FFFFFF"/>
+
+            <ImageView 
+                android:contentDescription="Minimize voice input" 
+                android:id="@+id/btn_voice_collapse" 
+                android:layout_height="32dp" 
+                android:layout_width="32dp" 
+                android:src="@drawable/keyboard_arrow_down_24"
+                android:background="?android:attr/selectableItemBackground"
+                android:tint="#FFFFFF"
+                android:padding="4dp"
+                android:layout_marginEnd="12dp"/>
+                
+            <ImageView
+                android:id="@+id/btn_voice_mic"
+                android:layout_width="40dp"
+                android:layout_height="40dp"
+                android:src="@drawable/ic_mic"
+                android:background="@drawable/ic_mic_bg_circle"
+                android:tint="#FFFFFF"
+                android:padding="8dp"/>
+
+        </LinearLayout>
+
+        <!-- ── GRAMMAR BANNER ────────────────────────────────────────────────── -->
+        <LinearLayout
+            android:id="@+id/grammar_banner"
+            android:layout_width="match_parent"
+            android:layout_height="36dp"
+            android:orientation="horizontal"
+            android:background="#E8F4FD"
+            android:gravity="center_vertical"
+            android:paddingStart="12dp"
+            android:paddingEnd="8dp"
+            android:visibility="gone">
+
+            <TextView
+                android:id="@+id/grammar_text"
+                android:layout_width="0dp"
+                android:layout_height="wrap_content"
+                android:layout_weight="1"
+                android:text="Suggestion: ..."
+                android:textSize="12sp"
+                android:textColor="#0056A0"
+                android:ellipsize="end"
+                android:maxLines="1"/>
+
+            <Button
+                android:id="@+id/btn_grammar_dismiss"
+                android:layout_width="wrap_content"
+                android:layout_height="28dp"
+                android:text="âœ•"
+                android:textSize="11sp"
+                android:textColor="#0056A0"
+                android:background="@android:color/transparent"
+                android:paddingStart="6dp"
+                android:paddingEnd="6dp"/>
+
+        </LinearLayout>
+
+        <!-- â”€â”€ SUGGESTION BAR â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€ -->
+        <HorizontalScrollView
+            android:id="@+id/suggestion_scroll"
+            android:layout_width="match_parent"
+            android:layout_height="30dp"
+            android:scrollbars="none"
+            android:background="#1E1F22"
+            android:fillViewport="true">
+
+            <LinearLayout
+                android:id="@+id/suggestion_container"
+                android:layout_width="wrap_content"
+                android:layout_height="match_parent"
+                android:orientation="horizontal"
+                android:gravity="center"
+                android:paddingStart="8dp"
+                android:paddingEnd="8dp"/>
+
+        </HorizontalScrollView>
+
+        <!-- â•â• CONTENT FLIPPER â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•
+             Child index constants (see MyKeyboardService.FLIPPER_*):
+               0 = keyboard (KeyboardView)
+               1 = emoji panel  (FrameLayout host, populated at runtime)
+               2 = GIF placeholder
+               3 = theme quick-panel
+               4 = settings mini-panel
+        â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â• -->
+        <!-- ── CLIPBOARD DRAWER ─────────────────────────────────────────────────
+             Hidden by default; toggled by the clipboard toolbar button.        -->
+        <FrameLayout
+            android:id="@+id/clipboard_drawer"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:visibility="gone">
+            <include layout="@layout/layout_clipboard_drawer"/>
+        </FrameLayout>
+
+        <ViewFlipper
+            android:id="@+id/content_flipper"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content">
+
+            <!-- ── Child 0: KEYBOARD ────────────────────────────────────────── -->
+            <com.babeltech.babelkey.BabelKeyboardView
+                android:id="@+id/keyboard_view"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:keyTextSize="18sp"
+                android:labelTextSize="14sp"
+                android:keyTextColor="#FFFFFF"
+                android:keyBackground="@drawable/key_background_normal"
+                android:shadowColor="#00000000"
+                android:shadowRadius="0"
+                android:background="#1E1F22"
+                android:paddingTop="0dp"
+                android:paddingBottom="0dp"
+                android:paddingStart="0dp"
+                android:paddingEnd="0dp"/>
+
+            <!-- â”€â”€ Child 1: EMOJI HOST â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€ -->
+            <!--  Populated at runtime by EmojiKeyboardView  -->
+            <FrameLayout
+                android:id="@+id/emoji_flipper_host"
+                android:layout_width="match_parent"
+                android:layout_height="match_parent"
+                android:background="#1E1F22"/>
+
+            <!-- ── Child 2: THEME QUICK-PANEL ───────────────────────────────── -->
+            <include layout="@layout/settings_panel"/>
+
+            <!-- ── Child 3: SETTINGS / STATS / MISC PANELS ──────────────────── -->
+            <!--
+                Legacy panels that the service toggles with setVisibility() are
+                kept here inside a ScrollView so they don't break old service code.
+            -->
+            <ScrollView
+                android:id="@+id/misc_panel_host"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:background="#1E1F22">
+
+                <LinearLayout
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:orientation="vertical">
+
+                    <!-- TOOLBAR CUSTOMIZER PANEL -->
+                    <LinearLayout
+                        android:id="@+id/toolbar_customizer_panel"
+                        android:layout_width="match_parent"
+                        android:layout_height="180dp"
+                        android:orientation="vertical"
+                        android:background="#F5F5F5"
+                        android:visibility="gone">
+
+                        <TextView
+                            android:layout_width="match_parent"
+                            android:layout_height="wrap_content"
+                            android:text="ðŸ› ï¸ Customize Toolbar â€” check to show, â–²â–¼ to reorder"
+                            android:textSize="11sp"
+                            android:textStyle="bold"
+                            android:padding="8dp"
+                            android:background="#E0E0E0"/>
+
+                        <ScrollView
+                            android:layout_width="match_parent"
+                            android:layout_height="0dp"
+                            android:layout_weight="1">
+
+                            <LinearLayout
+                                android:id="@+id/toolbar_customizer_list"
+                                android:layout_width="match_parent"
+                                android:layout_height="wrap_content"
+                                android:orientation="vertical"/>
+
+                        </ScrollView>
+
+                    </LinearLayout>
+
+                    <!-- STATS PANEL -->
+                    <ScrollView
+                        android:id="@+id/stats_panel"
+                        android:layout_width="match_parent"
+                        android:layout_height="120dp"
+                        android:background="#FFF8E1"
+                        android:visibility="gone">
+
+                        <LinearLayout
+                            android:id="@+id/stats_container"
+                            android:layout_width="match_parent"
+                            android:layout_height="wrap_content"
+                            android:orientation="vertical"
+                            android:padding="10dp"/>
+
+                    </ScrollView>
+
+                    <!-- CLIPBOARD PANEL -->
+                    <LinearLayout
+                        android:id="@+id/clipboard_panel"
+                        android:layout_width="match_parent"
+                        android:layout_height="100dp"
+                        android:orientation="vertical"
+                        android:background="#EFEFEF"
+                        android:visibility="gone">
+
+                        <HorizontalScrollView
+                            android:layout_width="match_parent"
+                            android:layout_height="match_parent"
+                            android:scrollbars="none">
+
+                            <LinearLayout
+                                android:id="@+id/clipboard_container"
+                                android:layout_width="wrap_content"
+                                android:layout_height="match_parent"
+                                android:orientation="horizontal"
+                                android:padding="6dp"
+                                android:gravity="center_vertical"/>
+
+                        </HorizontalScrollView>
+
+                    </LinearLayout>
+
+                    <!-- PHRASES PANEL -->
+                    <HorizontalScrollView
+                        android:id="@+id/phrases_panel"
+                        android:layout_width="match_parent"
+                        android:layout_height="44dp"
+                        android:scrollbars="none"
+                        android:background="#E8F5E9"
+                        android:visibility="gone">
+
+                        <LinearLayout
+                            android:id="@+id/phrases_container"
+                            android:layout_width="wrap_content"
+                            android:layout_height="match_parent"
+                            android:orientation="horizontal"
+                            android:gravity="center_vertical"
+                            android:paddingStart="6dp"
+                            android:paddingEnd="6dp"/>
+
+                    </HorizontalScrollView>
+
+                    <!-- AI QUICK REPLIES BAR -->
+                    <HorizontalScrollView
+                        android:id="@+id/ai_replies_panel"
+                        android:layout_width="match_parent"
+                        android:layout_height="40dp"
+                        android:scrollbars="none"
+                        android:background="#EDE7F6"
+                        android:visibility="gone">
+
+                        <LinearLayout
+                            android:id="@+id/ai_replies_container"
+                            android:layout_width="wrap_content"
+                            android:layout_height="match_parent"
+                            android:orientation="horizontal"
+                            android:gravity="center_vertical"
+                            android:paddingStart="6dp"
+                            android:paddingEnd="6dp"/>
+
+                    </HorizontalScrollView>
+
+                </LinearLayout>
+
+            </ScrollView>
+
+        </ViewFlipper>
+        <!-- End content_flipper -->
+
+    </LinearLayout>
+    <!-- End keyboard_root -->
+
+    <!-- â•â• TRACKPAD OVERLAY (sits above everything in the FrameLayout) â•â•â•â•â•â• -->
+    <LinearLayout
+        android:id="@+id/trackpad_overlay"
+        android:layout_width="match_parent"
+        android:layout_height="match_parent"
+        android:orientation="vertical"
+        android:gravity="center"
+        android:background="@drawable/trackpad_bg"
+        android:padding="16dp"
+        android:visibility="gone">
+
+        <TextView
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:text="ðŸ‘† Trackpad Mode"
+            android:textColor="#FFFFFF"
+            android:textSize="18sp"
+            android:textStyle="bold"
+            android:paddingBottom="8dp"/>
+
+        <TextView
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:text="Slide finger to move cursor"
+            android:textColor="#CCCCCC"
+            android:textSize="13sp"
+            android:paddingBottom="4dp"/>
+
+        <TextView
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:text="Release to exit"
+            android:textColor="#AAAAAA"
+            android:textSize="11sp"/>
+
+    </LinearLayout>
+
+    <!-- â•â• RESIZE OVERLAY â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•
+         Sits on top of everything in the outer FrameLayout.
+         Shown when resize mode is active (GONE by default).
+         Structure matches the Gboard resize UX:
+           â€¢ Top drag-handle strip â†’ user slides finger up/down to set height
+           â€¢ Dim scrim covers the keyboard
+           â€¢ Reset + âœšmove-icon + Done row in the centre
+    â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â• -->
+    <FrameLayout
+        android:id="@+id/resize_overlay"
+        android:layout_width="match_parent"
+        android:layout_height="match_parent"
+        android:visibility="gone">
+
+        <!-- Dim background -->
+        <View
+            android:layout_width="match_parent"
+            android:layout_height="match_parent"
+            android:background="#88000000"/>
+
+        <!-- Drag handle at the very top â€” user grabs and slides vertically -->
+        <LinearLayout
+            android:id="@+id/resize_drag_handle"
+            android:layout_width="match_parent"
+            android:layout_height="36dp"
+            android:layout_gravity="top"
+            android:orientation="horizontal"
+            android:gravity="center"
+            android:background="#00000000">
+
+            <!-- Visible pill handle indicator -->
+            <View
+                android:layout_width="56dp"
+                android:layout_height="4dp"
+                android:layout_gravity="center_vertical"
+                android:background="#AAAAAA"
+                android:backgroundTintMode="src_in"/>
+        </LinearLayout>
+
+        <!-- Centre row: Reset  âœ›  Done -->
+        <LinearLayout
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_gravity="center"
+            android:orientation="horizontal"
+            android:gravity="center_vertical">
+
+            <!-- Reset button -->
+            <Button
+                android:id="@+id/btn_resize_reset"
+                android:layout_width="140dp"
+                android:layout_height="48dp"
+                android:text="â†º  Reset"
+                android:textColor="#FFFFFF"
+                android:textSize="15sp"
+                android:backgroundTint="#1565C0"
+                android:stateListAnimator="@null"
+                android:layout_marginEnd="16dp"/>
+
+            <!-- Move/drag icon â€” purely visual, same drag target as whole overlay -->
+            <TextView
+                android:layout_width="52dp"
+                android:layout_height="52dp"
+                android:text="âœ›"
+                android:textSize="24sp"
+                android:textColor="#FFFFFF"
+                android:gravity="center"
+                android:background="@drawable/key_background_normal"
+                android:layout_marginEnd="16dp"/>
+
+            <!-- Done button -->
+            <Button
+                android:id="@+id/btn_resize_done"
+                android:layout_width="140dp"
+                android:layout_height="48dp"
+                android:text="âœ“  Done"
+                android:textColor="#FFFFFF"
+                android:textSize="15sp"
+                android:backgroundTint="#1565C0"
+                android:stateListAnimator="@null"/>
+
+        </LinearLayout>
+
+    </FrameLayout>
+
+</FrameLayout>
+

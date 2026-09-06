@@ -1,0 +1,459 @@
+<?xml version="1.0" encoding="utf-8"?>
+<!--
+    activity_settings_theme.xml
+    Theme picker sub-screen.
+    6 large theme cards in a 2-column grid, each shows a color preview + name.
+    Selected theme gets a blue checkmark overlay.
+-->
+<LinearLayout
+    xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent"
+    android:orientation="vertical"
+    android:background="#1A1E22">
+
+    <com.google.android.material.appbar.AppBarLayout
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:background="#1A1E22"
+        app:elevation="0dp">
+
+        <androidx.appcompat.widget.Toolbar
+            android:id="@+id/toolbar"
+            android:layout_width="match_parent"
+            android:layout_height="?attr/actionBarSize"
+            android:background="#1A1E22"
+            app:titleTextColor="#FFFFFF"
+            android:theme="@style/ThemeOverlay.AppCompat.Dark.ActionBar"/>
+
+    </com.google.android.material.appbar.AppBarLayout>
+
+    <ScrollView
+        android:layout_width="match_parent"
+        android:layout_height="match_parent"
+        android:background="#1A1E22">
+
+        <LinearLayout
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:orientation="vertical"
+            android:padding="16dp">
+
+            <TextView
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:text="Choose a theme"
+                android:textColor="#9AA0A6"
+                android:textSize="13sp"
+                android:paddingBottom="12dp"/>
+
+            <!-- Row 1 -->
+            <LinearLayout
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:orientation="horizontal"
+                android:layout_marginBottom="12dp">
+
+                <!-- Light -->
+                <LinearLayout
+                    android:id="@+id/theme_light"
+                    android:layout_width="0dp"
+                    android:layout_height="100dp"
+                    android:layout_weight="1"
+                    android:layout_marginEnd="8dp"
+                    android:orientation="vertical"
+                    android:gravity="center"
+                    android:background="#E8EAED"
+                    android:padding="8dp">
+
+                    <TextView
+                        android:layout_width="wrap_content"
+                        android:layout_height="wrap_content"
+                        android:text="☀️"
+                        android:textSize="28sp"
+                        android:gravity="center"/>
+
+                    <TextView
+                        android:layout_width="wrap_content"
+                        android:layout_height="wrap_content"
+                        android:text="Light"
+                        android:textColor="#202124"
+                        android:textSize="13sp"
+                        android:paddingTop="4dp"/>
+
+                    <TextView
+                        android:id="@+id/check_light"
+                        android:layout_width="wrap_content"
+                        android:layout_height="wrap_content"
+                        android:text="✓"
+                        android:textColor="#1565C0"
+                        android:textSize="16sp"
+                        android:textStyle="bold"
+                        android:visibility="gone"/>
+                </LinearLayout>
+
+                <!-- Dark -->
+                <LinearLayout
+                    android:id="@+id/theme_dark"
+                    android:layout_width="0dp"
+                    android:layout_height="100dp"
+                    android:layout_weight="1"
+                    android:layout_marginStart="8dp"
+                    android:orientation="vertical"
+                    android:gravity="center"
+                    android:background="#23282D"
+                    android:padding="8dp">
+
+                    <TextView
+                        android:layout_width="wrap_content"
+                        android:layout_height="wrap_content"
+                        android:text="🌙"
+                        android:textSize="28sp"
+                        android:gravity="center"/>
+
+                    <TextView
+                        android:layout_width="wrap_content"
+                        android:layout_height="wrap_content"
+                        android:text="Dark"
+                        android:textColor="#FFFFFF"
+                        android:textSize="13sp"
+                        android:paddingTop="4dp"/>
+
+                    <TextView
+                        android:id="@+id/check_dark"
+                        android:layout_width="wrap_content"
+                        android:layout_height="wrap_content"
+                        android:text="✓"
+                        android:textColor="#8AB4F8"
+                        android:textSize="16sp"
+                        android:textStyle="bold"
+                        android:visibility="gone"/>
+                </LinearLayout>
+
+            </LinearLayout>
+
+            <!-- Row 2 -->
+            <LinearLayout
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:orientation="horizontal"
+                android:layout_marginBottom="12dp">
+
+                <!-- Black -->
+                <LinearLayout
+                    android:id="@+id/theme_black"
+                    android:layout_width="0dp"
+                    android:layout_height="100dp"
+                    android:layout_weight="1"
+                    android:layout_marginEnd="8dp"
+                    android:orientation="vertical"
+                    android:gravity="center"
+                    android:background="#000000"
+                    android:padding="8dp">
+
+                    <TextView
+                        android:layout_width="wrap_content"
+                        android:layout_height="wrap_content"
+                        android:text="⬛"
+                        android:textSize="28sp"
+                        android:gravity="center"/>
+
+                    <TextView
+                        android:layout_width="wrap_content"
+                        android:layout_height="wrap_content"
+                        android:text="Black"
+                        android:textColor="#FFFFFF"
+                        android:textSize="13sp"
+                        android:paddingTop="4dp"/>
+
+                    <TextView
+                        android:id="@+id/check_black"
+                        android:layout_width="wrap_content"
+                        android:layout_height="wrap_content"
+                        android:text="✓"
+                        android:textColor="#8AB4F8"
+                        android:textSize="16sp"
+                        android:textStyle="bold"
+                        android:visibility="gone"/>
+                </LinearLayout>
+
+                <!-- AMOLED -->
+                <LinearLayout
+                    android:id="@+id/theme_amoled"
+                    android:layout_width="0dp"
+                    android:layout_height="100dp"
+                    android:layout_weight="1"
+                    android:layout_marginStart="8dp"
+                    android:orientation="vertical"
+                    android:gravity="center"
+                    android:background="#0D0D0D"
+                    android:padding="8dp">
+
+                    <TextView
+                        android:layout_width="wrap_content"
+                        android:layout_height="wrap_content"
+                        android:text="💎"
+                        android:textSize="28sp"
+                        android:gravity="center"/>
+
+                    <TextView
+                        android:layout_width="wrap_content"
+                        android:layout_height="wrap_content"
+                        android:text="AMOLED"
+                        android:textColor="#8AB4F8"
+                        android:textSize="13sp"
+                        android:paddingTop="4dp"/>
+
+                    <TextView
+                        android:id="@+id/check_amoled"
+                        android:layout_width="wrap_content"
+                        android:layout_height="wrap_content"
+                        android:text="✓"
+                        android:textColor="#8AB4F8"
+                        android:textSize="16sp"
+                        android:textStyle="bold"
+                        android:visibility="gone"/>
+                </LinearLayout>
+
+            </LinearLayout>
+
+            <!-- Row 3 -->
+            <LinearLayout
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:orientation="horizontal"
+                android:layout_marginBottom="12dp">
+
+                <!-- Blue -->
+                <LinearLayout
+                    android:id="@+id/theme_blue"
+                    android:layout_width="0dp"
+                    android:layout_height="100dp"
+                    android:layout_weight="1"
+                    android:layout_marginEnd="8dp"
+                    android:orientation="vertical"
+                    android:gravity="center"
+                    android:background="#1565C0"
+                    android:padding="8dp">
+
+                    <TextView
+                        android:layout_width="wrap_content"
+                        android:layout_height="wrap_content"
+                        android:text="💙"
+                        android:textSize="28sp"
+                        android:gravity="center"/>
+
+                    <TextView
+                        android:layout_width="wrap_content"
+                        android:layout_height="wrap_content"
+                        android:text="Blue"
+                        android:textColor="#FFFFFF"
+                        android:textSize="13sp"
+                        android:paddingTop="4dp"/>
+
+                    <TextView
+                        android:id="@+id/check_blue"
+                        android:layout_width="wrap_content"
+                        android:layout_height="wrap_content"
+                        android:text="✓"
+                        android:textColor="#FFFFFF"
+                        android:textSize="16sp"
+                        android:textStyle="bold"
+                        android:visibility="gone"/>
+                </LinearLayout>
+
+                <!-- Green -->
+                <LinearLayout
+                    android:id="@+id/theme_green"
+                    android:layout_width="0dp"
+                    android:layout_height="100dp"
+                    android:layout_weight="1"
+                    android:layout_marginStart="8dp"
+                    android:orientation="vertical"
+                    android:gravity="center"
+                    android:background="#1B5E20"
+                    android:padding="8dp">
+
+                    <TextView
+                        android:layout_width="wrap_content"
+                        android:layout_height="wrap_content"
+                        android:text="💚"
+                        android:textSize="28sp"
+                        android:gravity="center"/>
+
+                    <TextView
+                        android:layout_width="wrap_content"
+                        android:layout_height="wrap_content"
+                        android:text="Green"
+                        android:textColor="#FFFFFF"
+                        android:textSize="13sp"
+                        android:paddingTop="4dp"/>
+
+                    <TextView
+                        android:id="@+id/check_green"
+                        android:layout_width="wrap_content"
+                        android:layout_height="wrap_content"
+                        android:text="✓"
+                        android:textColor="#FFFFFF"
+                        android:textSize="16sp"
+                        android:textStyle="bold"
+                        android:visibility="gone"/>
+                </LinearLayout>
+
+            </LinearLayout>
+
+            <!-- Custom photo background row -->
+            <View android:layout_width="match_parent" android:layout_height="1dp"
+                android:background="#2D3136" android:layout_marginVertical="12dp"/>
+
+            <TextView
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:text="Custom"
+                android:textColor="#9AA0A6"
+                android:textSize="13sp"
+                android:paddingBottom="8dp"/>
+
+            <!-- Custom photo card -->
+            <LinearLayout
+                android:id="@+id/theme_custom"
+                android:layout_width="match_parent"
+                android:layout_height="80dp"
+                android:orientation="horizontal"
+                android:gravity="center_vertical"
+                android:background="#2D3136"
+                android:paddingStart="20dp"
+                android:paddingEnd="16dp">
+
+                <TextView
+                    android:layout_width="40dp"
+                    android:layout_height="40dp"
+                    android:text="🖼"
+                    android:textSize="24sp"
+                    android:gravity="center"/>
+
+                <LinearLayout
+                    android:layout_width="0dp"
+                    android:layout_height="wrap_content"
+                    android:layout_weight="1"
+                    android:orientation="vertical"
+                    android:paddingStart="16dp">
+
+                    <TextView
+                        android:layout_width="wrap_content"
+                        android:layout_height="wrap_content"
+                        android:text="Custom photo"
+                        android:textColor="#E8EAED"
+                        android:textSize="15sp"/>
+
+                    <TextView
+                        android:id="@+id/tv_custom_photo_label"
+                        android:layout_width="wrap_content"
+                        android:layout_height="wrap_content"
+                        android:text="Tap to pick from gallery"
+                        android:textColor="#9AA0A6"
+                        android:textSize="13sp"
+                        android:paddingTop="2dp"/>
+                </LinearLayout>
+
+                <TextView
+                    android:id="@+id/check_custom"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:text="✓"
+                    android:textColor="#8AB4F8"
+                    android:textSize="16sp"
+                    android:textStyle="bold"
+                    android:visibility="gone"/>
+
+            </LinearLayout>
+
+            <!-- Sound pack section -->
+            <View android:layout_width="match_parent" android:layout_height="1dp"
+                android:background="#2D3136" android:layout_marginVertical="12dp"/>
+
+            <TextView
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:text="Key sound"
+                android:textColor="#8AB4F8"
+                android:textSize="13sp"
+                android:textStyle="bold"
+                android:paddingBottom="8dp"/>
+
+            <RadioGroup
+                android:id="@+id/rg_sounds"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content">
+
+                <RadioButton android:id="@+id/rb_sound0" android:layout_width="wrap_content"
+                    android:layout_height="48dp" android:text="  🔇  Off"
+                    android:textColor="#E8EAED" android:textSize="15sp"/>
+                <RadioButton android:id="@+id/rb_sound1" android:layout_width="wrap_content"
+                    android:layout_height="48dp" android:text="  ⚙️  Mechanical"
+                    android:textColor="#E8EAED" android:textSize="15sp"/>
+                <RadioButton android:id="@+id/rb_sound2" android:layout_width="wrap_content"
+                    android:layout_height="48dp" android:text="  📜  Typewriter"
+                    android:textColor="#E8EAED" android:textSize="15sp"/>
+                <RadioButton android:id="@+id/rb_sound3" android:layout_width="wrap_content"
+                    android:layout_height="48dp" android:text="  🫧  Bubble"
+                    android:textColor="#E8EAED" android:textSize="15sp"/>
+                <RadioButton android:id="@+id/rb_sound4" android:layout_width="wrap_content"
+                    android:layout_height="48dp" android:text="  🎮  Gaming"
+                    android:textColor="#E8EAED" android:textSize="15sp"/>
+                <RadioButton android:id="@+id/rb_sound5" android:layout_width="wrap_content"
+                    android:layout_height="48dp" android:text="  🌿  Soft"
+                    android:textColor="#E8EAED" android:textSize="15sp"/>
+                <RadioButton android:id="@+id/rb_sound6" android:layout_width="wrap_content"
+                    android:layout_height="48dp" android:text="  🔮  Crystal"
+                    android:textColor="#E8EAED" android:textSize="15sp"/>
+
+            </RadioGroup>
+
+            <!-- Volume -->
+            <TextView
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:text="Sound volume"
+                android:textColor="#8AB4F8"
+                android:textSize="13sp"
+                android:textStyle="bold"
+                android:paddingTop="12dp"
+                android:paddingBottom="8dp"/>
+
+            <SeekBar
+                android:id="@+id/seek_volume"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:max="100"
+                android:layout_marginBottom="24dp"/>
+
+            <!-- AI Auto-Replies -->
+            <View android:layout_width="match_parent" android:layout_height="1dp"
+                android:background="#2D3136" android:layout_marginVertical="12dp"/>
+
+            <LinearLayout
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:orientation="horizontal"
+                android:gravity="center_vertical"
+                android:paddingBottom="24dp">
+
+                <TextView
+                    android:layout_width="0dp"
+                    android:layout_height="wrap_content"
+                    android:layout_weight="1"
+                    android:text="🤖 AI Auto-Replies"
+                    android:textColor="#E8EAED"
+                    android:textSize="15sp"/>
+
+                <Switch
+                    android:id="@+id/switch_ai_replies"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"/>
+            </LinearLayout>
+
+        </LinearLayout>
+    </ScrollView>
+</LinearLayout>

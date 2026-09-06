@@ -1,0 +1,5 @@
+<resources>
+    <style name="Theme.MyApplication" parent="Theme.MaterialComponents.DayNight.NoActionBar">
+        <item name="colorPrimary">@color/key_preview_bg</item>
+    </style>
+</resources>

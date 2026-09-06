@@ -1,0 +1,22 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+    <!-- Dark/night overrides for semantic color tokens -->
+    <color name="keyboard_background">#23282D</color>
+    <color name="key_background_normal">#3C3C3C</color>
+    <color name="key_background_pressed">#555555</color>
+    <color name="key_background_special">#232323</color>
+    <color name="key_text_color">#FFFFFF</color>
+    <color name="suggestion_bar_background">#1E1E1E</color>
+    <color name="suggestion_divider_color">#5F6368</color>
+    <color name="suggestion_chip_text">#B8BEC7</color>
+    <color name="suggestion_chip_text_bold">#8AB4F8</color>
+    <color name="clipboard_panel_background">#2A2A2A</color>
+    <color name="phrases_panel_background">#1E3020</color>
+    <color name="stats_panel_background">#2A2A1A</color>
+    <color name="settings_panel_background">#1E1E1E</color>
+    <color name="ai_chip_background">#1A2A3A</color>
+    <color name="ai_chip_text">#FFFFFF</color>
+    <color name="toolbar_background">#1B2127</color>
+    <color name="emoji_panel_background">#1B2127</color>
+    <color name="emoji_tab_background">#23282D</color>
+</resources>

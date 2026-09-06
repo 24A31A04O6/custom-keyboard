@@ -1,0 +1,65 @@
+<?xml version="1.0" encoding="utf-8"?>
+<!--
+    Emoji search panel — sits above the emoji grid.
+    Contains a search box and category tabs.
+-->
+<LinearLayout
+    xmlns:android="http://schemas.android.com/apk/res/android"
+    android:layout_width="match_parent"
+    android:layout_height="wrap_content"
+    android:orientation="vertical"
+    android:background="#F0F0F0">
+
+    <!-- Search input -->
+    <LinearLayout
+        android:layout_width="match_parent"
+        android:layout_height="40dp"
+        android:orientation="horizontal"
+        android:background="#E0E0E0"
+        android:gravity="center_vertical"
+        android:paddingStart="8dp"
+        android:paddingEnd="8dp">
+
+        <TextView
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:text="🔍"
+            android:textSize="16sp"
+            android:paddingEnd="6dp"/>
+
+        <EditText
+            android:id="@+id/emoji_search_input"
+            android:layout_width="0dp"
+            android:layout_height="32dp"
+            android:layout_weight="1"
+            android:hint="Search emoji..."
+            android:inputType="text"
+            android:background="@android:color/transparent"
+            android:textSize="14sp"
+            android:imeOptions="flagNoExtractUi"
+            android:maxLines="1"/>
+
+        <Button
+            android:id="@+id/btn_clear_search"
+            android:layout_width="32dp"
+            android:layout_height="32dp"
+            android:text="✕"
+            android:textSize="12sp"
+            android:background="@android:color/transparent"
+            android:textColor="#888888"/>
+
+    </LinearLayout>
+
+    <!-- Search results grid -->
+    <GridView
+        android:id="@+id/emoji_search_results"
+        android:layout_width="match_parent"
+        android:layout_height="120dp"
+        android:numColumns="8"
+        android:verticalSpacing="2dp"
+        android:horizontalSpacing="2dp"
+        android:padding="4dp"
+        android:stretchMode="columnWidth"
+        android:visibility="gone"/>
+
+</LinearLayout>

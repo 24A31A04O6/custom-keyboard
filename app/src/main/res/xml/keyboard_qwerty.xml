@@ -56,7 +56,7 @@
         <Key android:codes="-10" android:keyLabel="&#9786;" android:keyWidth="10%p"/>
         <Key android:codes="32" android:keyLabel=" " android:keyWidth="35%p"/>
         <Key android:codes="46" android:keyLabel="." android:keyWidth="10%p"/>
-        <Key android:codes="-4" android:keyIcon="@drawable/ic_enter" android:keyWidth="20%p" android:keyEdgeFlags="right"/>
+        <Key android:codes="-4" android:keyIcon="@drawable/ic_enter" android:keyWidth="20%p" android:keyEdgeFlags="right" android:keyBackground="@drawable/key_background_action"/>
     </Row>
 </Keyboard>
 

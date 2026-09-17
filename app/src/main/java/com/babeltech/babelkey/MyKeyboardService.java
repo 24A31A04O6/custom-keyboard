@@ -577,8 +577,13 @@ public class MyKeyboardService extends InputMethodService
         View bs  = root.findViewById(R.id.btn_tool_settings);
         View bm  = root.findViewById(R.id.btn_tool_mic);
 
-        // Grid → toggle clipboard drawer
-        if (bg  != null) bg.setOnClickListener(v -> clipManager.toggleDrawer());
+        // Grid → toggle clipboard drawer + highlight icon
+        if (bg  != null) bg.setOnClickListener(v -> {
+            clipManager.toggleDrawer();
+            boolean drawerOpen = (clipboardDrawer != null
+                    && clipboardDrawer.getVisibility() == View.VISIBLE);
+            highlightClipboard(drawerOpen);
+        });
 
         // Sticker → toggle emoji panel
         if (be  != null) be.setOnClickListener(v -> {
@@ -615,12 +620,36 @@ public class MyKeyboardService extends InputMethodService
         if (child == FLIPPER_KB) { keyboardView.setVisibility(View.VISIBLE); if (emojiFlipperHost != null && emojiPanel != null) { emojiFlipperHost.removeView(emojiPanel); emojiPanel = null; emojiKeyboardView = null; } }
         contentFlipper.setDisplayedChild(child); highlightIcon(child);
     }
+    /** Highlight the toolbar icon that corresponds to the currently active panel.
+     *  Flipper children:  0=KB  1=Emoji  2=Theme  3=Misc
+     *  Icon array order:  0=Grid  1=Sticker  2=Settings  3=Translate  4=Theme  5=Mic
+     */
     private void highlightIcon(int active) {
         if (keyboardRoot == null) return;
-        int[] ids = {R.id.btn_tool_grid, R.id.btn_tool_sticker, R.id.btn_tool_translate, R.id.btn_tool_theme, R.id.btn_tool_settings, R.id.btn_tool_mic};
-        int[] c2i = {-1, 1, 3, -1}; int ai = (active >= 0 && active < c2i.length) ? c2i[active] : -1;
-        int ac = androidx.core.content.ContextCompat.getColor(this, R.color.toolbar_icon_active), ic = androidx.core.content.ContextCompat.getColor(this, R.color.toolbar_icon_inactive);
-        for (int i = 0; i < ids.length; i++) { View v = keyboardRoot.findViewById(ids[i]); if (v instanceof android.widget.ImageView) ((android.widget.ImageView) v).setColorFilter(i == ai ? ac : ic); else if (v instanceof TextView) ((TextView) v).setTextColor(i == ai ? ac : ic); }
+        int[] ids = {R.id.btn_tool_grid, R.id.btn_tool_sticker, R.id.btn_tool_settings,
+                     R.id.btn_tool_translate, R.id.btn_tool_theme, R.id.btn_tool_mic};
+        // Map flipper child → icon array index (-1 = no highlight)
+        // FLIPPER_KB=0→none, FLIPPER_EMOJI=1→sticker(1), FLIPPER_THEME=2→palette(4), FLIPPER_MISC=3→none
+        int[] flipperToIcon = {-1, 1, 4, -1};
+        int ai = (active >= 0 && active < flipperToIcon.length) ? flipperToIcon[active] : -1;
+        int ac = androidx.core.content.ContextCompat.getColor(this, R.color.toolbar_icon_active);
+        int ic = androidx.core.content.ContextCompat.getColor(this, R.color.toolbar_icon_inactive);
+        for (int i = 0; i < ids.length; i++) {
+            View v = keyboardRoot.findViewById(ids[i]);
+            int color = (i == ai) ? ac : ic;
+            if (v instanceof android.widget.ImageView) ((android.widget.ImageView) v).setColorFilter(color);
+            else if (v instanceof TextView) ((TextView) v).setTextColor(color);
+        }
+    }
+
+    /** Highlight or un-highlight the clipboard/grid icon when the drawer toggles. */
+    private void highlightClipboard(boolean open) {
+        if (keyboardRoot == null) return;
+        View v = keyboardRoot.findViewById(R.id.btn_tool_grid);
+        int color = open
+            ? androidx.core.content.ContextCompat.getColor(this, R.color.toolbar_icon_active)
+            : androidx.core.content.ContextCompat.getColor(this, R.color.toolbar_icon_inactive);
+        if (v instanceof android.widget.ImageView) ((android.widget.ImageView) v).setColorFilter(color);
     }
     private void loadToolbarConfig() {
         tbOrder.clear(); tbVisible.clear();

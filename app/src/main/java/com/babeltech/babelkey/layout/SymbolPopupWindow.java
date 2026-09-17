@@ -1,4 +1,6 @@
-package com.babeltech.babelkey;
+package com.babeltech.babelkey.layout;
+
+import com.babeltech.babelkey.R;
 
 import android.annotation.SuppressLint;
 import android.content.Context;

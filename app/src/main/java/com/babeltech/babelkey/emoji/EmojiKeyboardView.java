@@ -1,4 +1,4 @@
-package com.babeltech.babelkey;
+package com.babeltech.babelkey.emoji;
 
 import android.content.Context;
 import android.graphics.Color;

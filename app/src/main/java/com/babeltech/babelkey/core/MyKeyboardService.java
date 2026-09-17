@@ -1,4 +1,6 @@
-package com.babeltech.babelkey;
+package com.babeltech.babelkey.core;
+
+import com.babeltech.babelkey.R;
 
 import android.content.ClipboardManager;
 import android.content.Context;
@@ -23,14 +25,19 @@ import android.widget.SeekBar;
 import android.widget.TextView;
 import android.widget.Toast;
 
-import com.babeltech.babelkey.managers.CrashLogger;
-import com.babeltech.babelkey.managers.GestureHandler;
-import com.babeltech.babelkey.managers.KeyboardClipboardManager;
-import com.babeltech.babelkey.managers.ServiceCallback;
-import com.babeltech.babelkey.managers.SoundHapticManager;
-import com.babeltech.babelkey.managers.SuggestionManager;
-import com.babeltech.babelkey.managers.ThemeManager;
-import com.babeltech.babelkey.managers.VoiceTypingManager;
+import com.babeltech.babelkey.clipboard.KeyboardClipboardManager;
+import com.babeltech.babelkey.emoji.EmojiKeyboardView;
+import com.babeltech.babelkey.gesture.GestureHandler;
+import com.babeltech.babelkey.layout.KeySymbolMap;
+import com.babeltech.babelkey.layout.SymbolPopupWindow;
+import com.babeltech.babelkey.settings.KeyboardSettingsActivity;
+import com.babeltech.babelkey.suggestion.SuggestionManager;
+import com.babeltech.babelkey.suggestion.SuggestionView;
+import com.babeltech.babelkey.theme.PickImageActivity;
+import com.babeltech.babelkey.theme.SettingsThemeActivity;
+import com.babeltech.babelkey.theme.SoundHapticManager;
+import com.babeltech.babelkey.theme.ThemeManager;
+import com.babeltech.babelkey.voice.VoiceTypingManager;
 
 import java.util.Arrays;
 import java.util.ArrayList;

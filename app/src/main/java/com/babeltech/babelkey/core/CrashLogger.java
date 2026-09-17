@@ -1,4 +1,4 @@
-package com.babeltech.babelkey.managers;
+package com.babeltech.babelkey.core;
 
 import android.util.Log;
 

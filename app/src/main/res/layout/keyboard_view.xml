@@ -338,7 +338,7 @@
             android:layout_height="wrap_content">
 
             <!-- ── Child 0: KEYBOARD ────────────────────────────────────────── -->
-            <com.babeltech.babelkey.BabelKeyboardView
+            <com.babeltech.babelkey.core.BabelKeyboardView
                 android:id="@+id/keyboard_view"
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"

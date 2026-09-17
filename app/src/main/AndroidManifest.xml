@@ -38,7 +38,7 @@
             - The meta-data tag points to method.xml which defines IME subtypes.
         -->
         <service
-            android:name=".MyKeyboardService"
+            android:name=".core.MyKeyboardService"
             android:exported="true"
             android:label="@string/ime_name"
             android:permission="android.permission.BIND_INPUT_METHOD">
@@ -57,7 +57,7 @@
             Activity bridges that gap. The transparent theme keeps UX clean.
         -->
         <activity
-            android:name=".PickImageActivity"
+            android:name=".theme.PickImageActivity"
             android:exported="false"
             android:theme="@android:style/Theme.Translucent.NoTitleBar"
             android:excludeFromRecents="true"/>
@@ -70,19 +70,19 @@
                 startActivity(intent);
         -->
         <activity
-            android:name=".KeyboardSettingsActivity"
+            android:name=".settings.KeyboardSettingsActivity"
             android:exported="true"
             android:label="Keyboard Settings"
             android:theme="@style/Theme.MyApplication"/>
 
         <activity
-            android:name=".SettingsCorrectionsActivity"
+            android:name=".settings.SettingsCorrectionsActivity"
             android:exported="false"
             android:label="Corrections and suggestions"
             android:theme="@style/Theme.MyApplication"/>
 
         <activity
-            android:name=".SettingsThemeActivity"
+            android:name=".theme.SettingsThemeActivity"
             android:exported="true"
             android:label="Theme"
             android:theme="@style/Theme.MyApplication"/>

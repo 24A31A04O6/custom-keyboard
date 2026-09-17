@@ -1,4 +1,4 @@
-package com.babeltech.babelkey;
+package com.babeltech.babelkey.core;
 
 import android.content.Context;
 import android.inputmethodservice.Keyboard;

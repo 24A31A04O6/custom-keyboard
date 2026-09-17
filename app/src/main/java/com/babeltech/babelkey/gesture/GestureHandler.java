@@ -1,4 +1,6 @@
-package com.babeltech.babelkey.managers;
+package com.babeltech.babelkey.gesture;
+
+import com.babeltech.babelkey.R;
 
 import android.content.Context;
 import android.content.SharedPreferences;
@@ -15,6 +17,9 @@ import java.util.ArrayList;
 import java.util.Collections;
 import java.util.List;
 import java.util.Map;
+
+import com.babeltech.babelkey.core.ServiceCallback;
+import com.babeltech.babelkey.layout.SymbolPopupWindow;
 
 /**
  * GestureHandler — owns all touch-event processing on KeyboardView:
@@ -43,7 +48,7 @@ public class GestureHandler {
     private View trackpadOverlay;
     private PopupWindow previewPopup;
     private TextView previewText;
-    private com.babeltech.babelkey.SymbolPopupWindow symbolPopup;
+    private SymbolPopupWindow symbolPopup;
 
     // Trackpad
     private boolean inTrackpad = false;
@@ -91,7 +96,7 @@ public class GestureHandler {
         setupTouch();
     }
     public void attachPreview(PopupWindow popup, TextView text) { previewPopup=popup; previewText=text; }
-    public void attachSymbolPopup(com.babeltech.babelkey.SymbolPopupWindow popup) { symbolPopup = popup; }
+    public void attachSymbolPopup(SymbolPopupWindow popup) { symbolPopup = popup; }
     public void setShiftState(int s) { shiftState=s; }
     public void setCurrentMode(int m) { currentMode=m; }
     public boolean isInTrackpad()    { return inTrackpad; }

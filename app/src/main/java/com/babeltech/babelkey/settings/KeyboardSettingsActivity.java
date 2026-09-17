@@ -1,4 +1,4 @@
-package com.babeltech.babelkey;
+package com.babeltech.babelkey.settings;
 
 import android.app.AlertDialog;
 import android.content.Intent;
@@ -17,6 +17,10 @@ import android.widget.Toast;
 import androidx.annotation.Nullable;
 import androidx.appcompat.app.AppCompatActivity;
 import androidx.appcompat.widget.Toolbar;
+
+import com.babeltech.babelkey.R;
+import com.babeltech.babelkey.theme.PickImageActivity;
+import com.babeltech.babelkey.theme.SettingsThemeActivity;
 
 /**
  * KeyboardSettingsActivity — main settings hub for BabelKey.

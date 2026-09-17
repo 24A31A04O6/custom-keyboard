@@ -1,4 +1,4 @@
-package com.babeltech.babelkey.managers;
+package com.babeltech.babelkey.theme;
 
 import android.content.Context;
 import android.content.SharedPreferences;

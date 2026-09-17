@@ -1,4 +1,6 @@
-package com.babeltech.babelkey;
+package com.babeltech.babelkey.settings;
+
+import com.babeltech.babelkey.R;
 
 import android.content.SharedPreferences;
 import android.os.Bundle;

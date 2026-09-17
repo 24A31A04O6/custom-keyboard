@@ -1,4 +1,6 @@
-package com.babeltech.babelkey;
+package com.babeltech.babelkey.theme;
+
+import com.babeltech.babelkey.R;
 
 import android.app.Activity;
 import android.content.Intent;

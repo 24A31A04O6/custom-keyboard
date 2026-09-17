@@ -1,4 +1,6 @@
-package com.babeltech.babelkey;
+package com.babeltech.babelkey.suggestion;
+
+import com.babeltech.babelkey.R;
 
 import android.content.Context;
 import android.graphics.Color;

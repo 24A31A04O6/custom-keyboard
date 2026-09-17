@@ -1,4 +1,9 @@
-package com.babeltech.babelkey.managers;
+package com.babeltech.babelkey.voice;
+
+import com.babeltech.babelkey.core.CrashLogger;
+import com.babeltech.babelkey.core.ServiceCallback;
+
+import com.babeltech.babelkey.R;
 
 import android.content.Context;
 import android.content.Intent;

@@ -1,4 +1,4 @@
-package com.babeltech.babelkey.managers;
+package com.babeltech.babelkey.suggestion;
 
 import android.content.Context;
 import android.content.SharedPreferences;
@@ -14,7 +14,8 @@ import android.widget.ScrollView;
 import android.widget.TextView;
 import android.widget.Toast;
 import com.babeltech.babelkey.R;
-import com.babeltech.babelkey.SuggestionView;
+import com.babeltech.babelkey.core.ServiceCallback;
+import com.babeltech.babelkey.translate.TranslationService;
 import org.json.JSONException;
 import org.json.JSONObject;
 import java.io.BufferedReader;

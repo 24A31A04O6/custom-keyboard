@@ -1,4 +1,4 @@
-package com.babeltech.babelkey;
+package com.babeltech.babelkey.layout;
 
 import java.util.HashMap;
 import java.util.Map;

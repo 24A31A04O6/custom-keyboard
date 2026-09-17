@@ -1,4 +1,4 @@
-package com.babeltech.babelkey.managers;
+package com.babeltech.babelkey.translate;
 
 import android.os.Handler;
 import android.os.Looper;
@@ -13,6 +13,8 @@ import java.net.URL;
 import java.nio.charset.StandardCharsets;
 import java.util.concurrent.ExecutorService;
 import java.util.concurrent.Executors;
+
+import com.babeltech.babelkey.core.CrashLogger;
 
 public class TranslationService {
     private static final String TRANSLATE_API_URL = "https://api.babeltech.com/translate";

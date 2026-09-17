@@ -1,4 +1,6 @@
-package com.babeltech.babelkey.managers;
+package com.babeltech.babelkey.clipboard;
+
+import com.babeltech.babelkey.core.ServiceCallback;
 
 import android.content.ClipData;
 import android.content.ClipboardManager;

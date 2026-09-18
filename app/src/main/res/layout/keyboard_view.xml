@@ -46,94 +46,108 @@
         <LinearLayout
             android:id="@+id/toolbar_strip"
             android:layout_width="match_parent"
-            android:layout_height="36dp"
+            android:layout_height="40dp"
             android:orientation="horizontal"
             android:background="@color/toolbar_background"
-            android:gravity="center_vertical">
+            android:gravity="center_vertical"
+            android:paddingStart="4dp"
+            android:paddingEnd="4dp">
 
-            <!-- Grid / panel switcher -->
+            <!-- Grid / Menu -->
             <ImageView
                 android:id="@+id/btn_tool_grid"
                 android:layout_width="0dp"
-                android:layout_height="22dp"
+                android:layout_height="32dp"
                 android:layout_weight="1"
                 android:src="@drawable/ic_tool_grid"
-                android:scaleType="fitCenter"
-                android:tint="#9AA0A6"
-                android:clickable="true"
-                android:focusable="true"
-                android:background="?android:attr/selectableItemBackground"
-                android:padding="4dp"/>
+                android:scaleType="centerInside"
+                android:tint="@color/toolbar_icon_inactive"
+                android:background="?android:attr/selectableItemBackgroundBorderless"
+                android:padding="6dp"/>
 
-            <!-- Stickers -->
+            <!-- Emoji -->
             <ImageView
-                android:id="@+id/btn_tool_sticker"
+                android:id="@+id/btn_tool_emoji"
                 android:layout_width="0dp"
-                android:layout_height="22dp"
+                android:layout_height="32dp"
                 android:layout_weight="1"
                 android:src="@drawable/ic_sticker"
-                android:scaleType="fitCenter"
-                android:tint="#9AA0A6"
-                android:clickable="true"
-                android:focusable="true"
-                android:background="?android:attr/selectableItemBackground"
-                android:padding="4dp"/>
+                android:scaleType="centerInside"
+                android:tint="@color/toolbar_icon_inactive"
+                android:background="?android:attr/selectableItemBackgroundBorderless"
+                android:padding="6dp"/>
 
-            <!-- Settings -->
+            <!-- Cursor / Text-select -->
             <ImageView
-                android:id="@+id/btn_tool_settings"
+                android:id="@+id/btn_tool_cursor"
                 android:layout_width="0dp"
-                android:layout_height="22dp"
+                android:layout_height="32dp"
                 android:layout_weight="1"
-                android:src="@drawable/ic_tool_settings"
-                android:scaleType="fitCenter"
-                android:tint="#9AA0A6"
-                android:clickable="true"
-                android:focusable="true"
-                android:background="?android:attr/selectableItemBackground"
-                android:padding="4dp"/>
+                android:src="@drawable/ic_tool_settings" 
+                android:scaleType="centerInside"
+                android:tint="@color/toolbar_icon_inactive"
+                android:background="?android:attr/selectableItemBackgroundBorderless"
+                android:padding="6dp"/>
+
+            <!-- GIF / Keyboard -->
+            <ImageView
+                android:id="@+id/btn_tool_gif"
+                android:layout_width="0dp"
+                android:layout_height="32dp"
+                android:layout_weight="1"
+                android:src="@drawable/ic_tool_palette" 
+                android:scaleType="centerInside"
+                android:tint="@color/toolbar_icon_inactive"
+                android:background="?android:attr/selectableItemBackgroundBorderless"
+                android:padding="6dp"/>
+
+            <!-- Clipboard -->
+            <ImageView
+                android:id="@+id/btn_tool_clipboard"
+                android:layout_width="0dp"
+                android:layout_height="32dp"
+                android:layout_weight="1"
+                android:src="@drawable/ic_tool_palette" 
+                android:scaleType="centerInside"
+                android:tint="@color/toolbar_icon_inactive"
+                android:background="?android:attr/selectableItemBackgroundBorderless"
+                android:padding="6dp"/>
 
             <!-- Translate -->
             <ImageView
                 android:id="@+id/btn_tool_translate"
                 android:layout_width="0dp"
-                android:layout_height="22dp"
+                android:layout_height="32dp"
                 android:layout_weight="1"
                 android:src="@drawable/ic_tool_translate"
-                android:scaleType="fitCenter"
-                android:tint="#9AA0A6"
-                android:clickable="true"
-                android:focusable="true"
-                android:background="?android:attr/selectableItemBackground"
-                android:padding="4dp"/>
+                android:scaleType="centerInside"
+                android:tint="@color/toolbar_icon_inactive"
+                android:background="?android:attr/selectableItemBackgroundBorderless"
+                android:padding="6dp"/>
 
-            <!-- Theme / palette -->
-            <ImageView
-                android:id="@+id/btn_tool_theme"
-                android:layout_width="0dp"
-                android:layout_height="22dp"
-                android:layout_weight="1"
-                android:src="@drawable/ic_tool_palette"
-                android:scaleType="fitCenter"
-                android:tint="#9AA0A6"
-                android:clickable="true"
-                android:focusable="true"
-                android:background="?android:attr/selectableItemBackground"
-                android:padding="4dp"/>
-
-            <!-- Mic / Voice input -->
+            <!-- Mic -->
             <ImageView
                 android:id="@+id/btn_tool_mic"
                 android:layout_width="0dp"
-                android:layout_height="22dp"
+                android:layout_height="32dp"
                 android:layout_weight="1"
                 android:src="@drawable/ic_tool_mic"
-                android:scaleType="fitCenter"
-                android:tint="#9AA0A6"
-                android:clickable="true"
-                android:focusable="true"
-                android:background="?android:attr/selectableItemBackground"
-                android:padding="4dp"/>
+                android:scaleType="centerInside"
+                android:tint="@color/toolbar_icon_inactive"
+                android:background="?android:attr/selectableItemBackgroundBorderless"
+                android:padding="6dp"/>
+                
+            <!-- Second Grid / More Icons indicator -->
+            <ImageView
+                android:id="@+id/btn_tool_more"
+                android:layout_width="0dp"
+                android:layout_height="32dp"
+                android:layout_weight="1"
+                android:src="@drawable/ic_tool_grid"
+                android:scaleType="centerInside"
+                android:tint="@color/toolbar_icon_inactive"
+                android:background="?android:attr/selectableItemBackgroundBorderless"
+                android:padding="6dp"/>
 
         </LinearLayout>
         <!-- End toolbar_strip -->

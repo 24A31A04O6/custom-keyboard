@@ -578,10 +578,10 @@ public class MyKeyboardService extends InputMethodService
 
     private void wireToolbarStrip(View root) {
         View bg  = root.findViewById(R.id.btn_tool_grid);
-        View be  = root.findViewById(R.id.btn_tool_sticker);
+        View be  = root.findViewById(R.id.btn_tool_emoji);
         View bt  = root.findViewById(R.id.btn_tool_translate);
-        View bth = root.findViewById(R.id.btn_tool_theme);
-        View bs  = root.findViewById(R.id.btn_tool_settings);
+        View bth = root.findViewById(R.id.btn_tool_gif);
+        View bs  = root.findViewById(R.id.btn_tool_cursor);
         View bm  = root.findViewById(R.id.btn_tool_mic);
 
         // Grid → toggle clipboard drawer + highlight icon
@@ -592,7 +592,7 @@ public class MyKeyboardService extends InputMethodService
             highlightClipboard(drawerOpen);
         });
 
-        // Sticker → toggle emoji panel
+        // Emoji → toggle emoji panel
         if (be  != null) be.setOnClickListener(v -> {
             if (contentFlipper != null && contentFlipper.getDisplayedChild() == FLIPPER_EMOJI) {
                 flipTo(FLIPPER_KB);
@@ -604,14 +604,14 @@ public class MyKeyboardService extends InputMethodService
         // Translate
         if (bt  != null) bt.setOnClickListener(v -> { flipTo(FLIPPER_KB); suggManager.handleTranslate(); });
 
-        // Settings → launch KeyboardSettingsActivity
+        // Cursor → launch KeyboardSettingsActivity
         if (bs  != null) bs.setOnClickListener(v -> {
             Intent i = new Intent(this, KeyboardSettingsActivity.class);
             i.setFlags(Intent.FLAG_ACTIVITY_NEW_TASK | Intent.FLAG_ACTIVITY_CLEAR_TOP);
             startActivity(i);
         });
 
-        // Theme → launch SettingsThemeActivity (deep-link)
+        // Gif → launch SettingsThemeActivity (deep-link)
         if (bth != null) bth.setOnClickListener(v -> {
             Intent i = new Intent(this, SettingsThemeActivity.class);
             i.setFlags(Intent.FLAG_ACTIVITY_NEW_TASK | Intent.FLAG_ACTIVITY_CLEAR_TOP);
@@ -629,15 +629,16 @@ public class MyKeyboardService extends InputMethodService
     }
     /** Highlight the toolbar icon that corresponds to the currently active panel.
      *  Flipper children:  0=KB  1=Emoji  2=Theme  3=Misc
-     *  Icon array order:  0=Grid  1=Sticker  2=Settings  3=Translate  4=Theme  5=Mic
+     *  Icon array order:  0=Grid  1=Emoji  2=Cursor  3=Gif  4=Clipboard  5=Translate  6=Mic  7=More
      */
     private void highlightIcon(int active) {
         if (keyboardRoot == null) return;
-        int[] ids = {R.id.btn_tool_grid, R.id.btn_tool_sticker, R.id.btn_tool_settings,
-                     R.id.btn_tool_translate, R.id.btn_tool_theme, R.id.btn_tool_mic};
+        int[] ids = {R.id.btn_tool_grid, R.id.btn_tool_emoji, R.id.btn_tool_cursor,
+                     R.id.btn_tool_gif, R.id.btn_tool_clipboard, R.id.btn_tool_translate,
+                     R.id.btn_tool_mic, R.id.btn_tool_more};
         // Map flipper child → icon array index (-1 = no highlight)
-        // FLIPPER_KB=0→none, FLIPPER_EMOJI=1→sticker(1), FLIPPER_THEME=2→palette(4), FLIPPER_MISC=3→none
-        int[] flipperToIcon = {-1, 1, 4, -1};
+        // FLIPPER_KB=0→none, FLIPPER_EMOJI=1→emoji(1), FLIPPER_THEME=2→gif(3), FLIPPER_MISC=3→none
+        int[] flipperToIcon = {-1, 1, 3, -1};
         int ai = (active >= 0 && active < flipperToIcon.length) ? flipperToIcon[active] : -1;
         int ac = androidx.core.content.ContextCompat.getColor(this, R.color.toolbar_icon_active);
         int ic = androidx.core.content.ContextCompat.getColor(this, R.color.toolbar_icon_inactive);

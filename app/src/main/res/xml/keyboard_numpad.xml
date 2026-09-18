@@ -1,46 +1,40 @@
 <?xml version="1.0" encoding="utf-8"?>
 <Keyboard xmlns:android="http://schemas.android.com/apk/res/android"
-    android:keyWidth="20%p"
+    android:keyWidth="25%p"
     android:keyHeight="56dp"
     android:horizontalGap="0dp"
     android:verticalGap="5dp">
 
     <!-- Row 1 -->
     <Row>
-        <Key android:codes="43"  android:keyLabel="+" android:keyWidth="15%p" android:keyEdgeFlags="left"/>
-        <Key android:codes="49"  android:keyLabel="1" />
+        <Key android:codes="49"  android:keyLabel="1" android:keyEdgeFlags="left"/>
         <Key android:codes="50"  android:keyLabel="2" />
         <Key android:codes="51"  android:keyLabel="3" />
-        <Key android:codes="37"  android:keyLabel="%" android:keyWidth="25%p" android:keyEdgeFlags="right"/>
+        <Key android:codes="45"  android:keyLabel="-" android:keyEdgeFlags="right"/>
     </Row>
 
     <!-- Row 2 -->
     <Row>
-        <Key android:codes="45"  android:keyLabel="-" android:keyWidth="15%p" android:keyEdgeFlags="left"/>
-        <Key android:codes="52"  android:keyLabel="4" />
+        <Key android:codes="52"  android:keyLabel="4" android:keyEdgeFlags="left"/>
         <Key android:codes="53"  android:keyLabel="5" />
         <Key android:codes="54"  android:keyLabel="6" />
-        <Key android:codes="32"  android:keyLabel=" " android:keyWidth="25%p" android:keyEdgeFlags="right"/>
+        <Key android:codes="32"  android:keyLabel=" " android:keyEdgeFlags="right"/>
     </Row>
 
     <!-- Row 3 -->
     <Row>
-        <Key android:codes="42"  android:keyLabel="*" android:keyWidth="15%p" android:keyEdgeFlags="left"/>
-        <Key android:codes="55"  android:keyLabel="7" />
+        <Key android:codes="55"  android:keyLabel="7" android:keyEdgeFlags="left"/>
         <Key android:codes="56"  android:keyLabel="8" />
         <Key android:codes="57"  android:keyLabel="9" />
-        <Key android:codes="-5"  android:keyIcon="@drawable/ic_backspace" android:keyWidth="25%p" android:isRepeatable="true" android:keyEdgeFlags="right"/>
+        <Key android:codes="-5"  android:keyIcon="@drawable/ic_backspace" android:isRepeatable="true" android:keyEdgeFlags="right"/>
     </Row>
 
     <!-- Row 4 -->
     <Row android:rowEdgeFlags="bottom">
-        <Key android:codes="-3"  android:keyLabel="ABC" android:keyWidth="15%p" android:keyEdgeFlags="left"/>
-        <Key android:codes="44"  android:keyLabel=","   android:keyWidth="10%p"/>
-        <Key android:codes="-13" android:keyLabel="!?#" android:keyWidth="15%p"/>
-        <Key android:codes="48"  android:keyLabel="0"   android:keyWidth="20%p"/>
-        <Key android:codes="61"  android:keyLabel="="   android:keyWidth="10%p"/>
-        <Key android:codes="46"  android:keyLabel="."   android:keyWidth="10%p"/>
-        <Key android:codes="-4"  android:keyIcon="@drawable/ic_enter" android:keyWidth="20%p" android:keyEdgeFlags="right"/>
+        <Key android:codes="44"  android:keyLabel="," android:keyEdgeFlags="left"/>
+        <Key android:codes="48"  android:keyLabel="0" />
+        <Key android:codes="46"  android:keyLabel="." />
+        <Key android:codes="-4"  android:keyIcon="@drawable/ic_enter" android:keyBackground="@drawable/key_background_action" android:keyEdgeFlags="right"/>
     </Row>
 
 </Keyboard>

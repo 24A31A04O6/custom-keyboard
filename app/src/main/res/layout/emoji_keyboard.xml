@@ -1,0 +1,52 @@
+<?xml version="1.0" encoding="utf-8"?>
+<!--
+    Emoji keyboard panel — Gboard-style.
+    match_parent height so it fills exactly the same space as the KeyboardView.
+    Background set dynamically by EmojiKeyboardView.applyTheme().
+-->
+<LinearLayout
+    xmlns:android="http://schemas.android.com/apk/res/android"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent"
+    android:orientation="vertical"
+    android:background="#23282D">
+
+    <!-- Category tab strip (scrollable) -->
+    <HorizontalScrollView
+        android:layout_width="match_parent"
+        android:layout_height="44dp"
+        android:scrollbars="none"
+        android:background="#1B2127">
+        <LinearLayout
+            android:id="@+id/emoji_category_tabs"
+            android:layout_width="wrap_content"
+            android:layout_height="match_parent"
+            android:orientation="horizontal"
+            android:gravity="center_vertical"/>
+    </HorizontalScrollView>
+
+    <!-- Emoji grid — takes all remaining height -->
+    <GridView
+        android:id="@+id/emoji_grid"
+        android:layout_width="match_parent"
+        android:layout_height="0dp"
+        android:layout_weight="1"
+        android:numColumns="8"
+        android:verticalSpacing="4dp"
+        android:horizontalSpacing="4dp"
+        android:padding="6dp"
+        android:stretchMode="columnWidth"
+        android:gravity="center"
+        android:background="#23282D"/>
+
+    <!-- Back to keyboard button -->
+    <Button
+        android:id="@+id/btn_back_to_keyboard"
+        android:layout_width="match_parent"
+        android:layout_height="46dp"
+        android:text="ABC ⌨️"
+        android:textSize="14sp"
+        android:textColor="#FFFFFF"
+        android:backgroundTint="#3D4043"/>
+
+</LinearLayout>

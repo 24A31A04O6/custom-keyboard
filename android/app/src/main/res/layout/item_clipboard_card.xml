@@ -1,0 +1,64 @@
+<?xml version="1.0" encoding="utf-8"?>
+<!--
+  item_clipboard_card.xml
+  Single clipboard history card used in the RecyclerView.
+  Layout:
+    ┌──────────────────────────────────────────┬───┬───┐
+    │  📌? clip text preview (2 lines max)     │ 📌│ ✕ │
+    └──────────────────────────────────────────┴───┴───┘
+-->
+<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    android:layout_width="match_parent"
+    android:layout_height="wrap_content"
+    android:orientation="horizontal"
+    android:gravity="center_vertical"
+    android:background="@drawable/bg_clipboard_card"
+    android:layout_marginStart="6dp"
+    android:layout_marginEnd="6dp"
+    android:layout_marginTop="3dp"
+    android:layout_marginBottom="3dp"
+    android:paddingStart="10dp"
+    android:paddingEnd="4dp"
+    android:paddingTop="6dp"
+    android:paddingBottom="6dp"
+    android:clickable="true"
+    android:focusable="true">
+
+    <!-- Clip text -->
+    <TextView
+        android:id="@+id/tv_clip_text"
+        android:layout_width="0dp"
+        android:layout_height="wrap_content"
+        android:layout_weight="1"
+        android:maxLines="2"
+        android:ellipsize="end"
+        android:textColor="#C8CDD4"
+        android:textSize="12sp"
+        android:lineSpacingMultiplier="1.2"/>
+
+    <!-- Pin button -->
+    <TextView
+        android:id="@+id/btn_clip_pin"
+        android:layout_width="32dp"
+        android:layout_height="32dp"
+        android:gravity="center"
+        android:text="📌"
+        android:textSize="14sp"
+        android:background="?android:attr/selectableItemBackground"
+        android:clickable="true"
+        android:focusable="true"/>
+
+    <!-- Delete button -->
+    <TextView
+        android:id="@+id/btn_clip_delete"
+        android:layout_width="32dp"
+        android:layout_height="32dp"
+        android:gravity="center"
+        android:text="✕"
+        android:textColor="#6B7280"
+        android:textSize="12sp"
+        android:background="?android:attr/selectableItemBackground"
+        android:clickable="true"
+        android:focusable="true"/>
+
+</LinearLayout>

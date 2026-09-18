@@ -1,0 +1,7 @@
+﻿<?xml version="1.0" encoding="utf-8"?>
+<resources>
+    <dimen name="toolbar_icon_size">24dp</dimen>
+    <dimen name="toolbar_height">48dp</dimen>
+    <dimen name="toolbar_padding">16dp</dimen>
+    <dimen name="toolbar_icon_spacing">8dp</dimen>
+</resources>

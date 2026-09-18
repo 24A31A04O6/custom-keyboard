@@ -1,0 +1,83 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+    <!-- Keyboard backgrounds -->
+    <color name="keyboard_background">#F0F0F0</color>
+    <!-- Dark charcoal/grey (not pure black) -->
+    <color name="keyboard_background_dark">#1E1F22</color> 
+    <color name="keyboard_background_glass">#80000000</color>
+
+    <!-- Key backgrounds -->
+    <color name="key_background_normal">#FFFFFF</color>
+    <color name="key_background_pressed">#D8D8D8</color>
+    <color name="key_background_special">#C8C8D0</color>
+
+    <color name="key_background_normal_dark">#2B2D31</color>
+    <color name="key_background_pressed_dark">#404249</color>
+    <color name="key_background_special_dark">#202124</color>
+
+    <!-- Glass key backgrounds (semi-transparent) -->
+    <color name="key_background_normal_glass">#33FFFFFF</color>
+    <color name="key_background_pressed_glass">#55FFFFFF</color>
+    <color name="key_background_special_glass">#22FFFFFF</color>
+
+    <!-- Key text -->
+    <color name="key_text_color">#1A1A1A</color>
+    <color name="key_text_color_dark">#FFFFFF</color>
+
+    <!-- Suggestion bar -->
+    <color name="suggestion_bar_background">#E8E8E8</color>
+    <color name="suggestion_text_color">#9AA0A6</color>
+    <color name="suggestion_divider_color">#4A4D50</color>
+    <color name="suggestion_chip_text">#9AA0A6</color>
+    <color name="suggestion_chip_text_bold">#FFFFFF</color>
+
+    <!-- Panels -->
+    <color name="clipboard_panel_background">#EFEFEF</color>
+    <color name="phrases_panel_background">#E8F5E9</color>
+    <color name="stats_panel_background">#FFF8E1</color>
+    <color name="settings_panel_background">#F5F5F5</color>
+
+    <!-- AI reply chips -->
+    <color name="ai_chip_background">#E3F2FD</color>
+    <color name="ai_chip_text">#1A1A1A</color>
+
+    <!-- Toolbar / strip -->
+    <color name="toolbar_background">#E0E0E0</color>
+    <color name="toolbar_background_dark">#1E1F22</color>
+    <!-- Accent color: light blue -->
+    <color name="toolbar_icon_active">#8AB4F8</color>
+    <color name="toolbar_icon_inactive">#9AA0A6</color>
+    <color name="toolbar_icon_active_bg">#308AB4F8</color> <!-- filled light-blue circular bg -->
+
+    <!-- Emoji panel -->
+    <color name="emoji_panel_background">#F5F5F5</color>
+    <color name="emoji_tab_background">#EEEEEE</color>
+
+    <!-- Accent / Action key blue -->
+    <color name="accent_color">#8AB4F8</color>
+    <color name="key_preview_bg_color">#3C3F41</color>
+    <color name="action_key_color">#8AB4F8</color>
+
+    <!-- Legacy names kept for XML drawables -->
+    <color name="keyboard_bg_light">#F0F0F0</color>
+    <color name="key_bg_light">#FFFFFF</color>
+    <color name="key_special_bg_light">#C8C8D0</color>
+    <color name="key_text_light">#1A1A1A</color>
+    <color name="suggestion_bar_light">#E8E8E8</color>
+    
+    <color name="keyboard_bg_dark">#1E1F22</color>
+    <color name="key_bg_dark">#2B2D31</color>
+    <color name="key_special_bg_dark">#202124</color>
+    <color name="key_text_dark">#FFFFFF</color>
+    <color name="suggestion_bar_dark">#1E1F22</color>
+    
+    <color name="key_preview_bg">#2B2D31</color>
+    <color name="suggestion_text">#9AA0A6</color>
+    <color name="toolbar_icon_tint">#9AA0A6</color>
+
+    <!-- MaterialSwitch -->
+    <color name="switch_track_on">#8AB4F8</color>
+    <color name="switch_thumb_on">#1E1F22</color>
+    <color name="switch_track_off">#4D4D4D</color>
+    <color name="switch_thumb_off">#B0B0B0</color>
+</resources>

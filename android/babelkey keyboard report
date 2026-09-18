@@ -1,0 +1,135 @@
+# MyBoard Refactor Report
+
+## 1. Package Structure (Before vs. After)
+
+**Before (Monolithic Structure):**
+```text
+com.babeltech.babelkey/
+├── managers/
+│   ├── CrashLogger.java
+│   ├── GestureHandler.java
+│   ├── KeyboardClipboardManager.java
+│   ├── ServiceCallback.java
+│   ├── SmartReplyManager.java
+│   ├── SoundHapticManager.java
+│   ├── SuggestionManager.java
+│   ├── ThemeManager.java
+│   ├── TranslationService.java
+│   └── VoiceTypingManager.java
+├── BabelKeyboardView.java
+├── EmojiKeyboardView.java
+├── EmojiManager.java
+├── HistoryManager.java
+├── KeySymbolMap.java
+├── KeyboardSettingsActivity.java
+├── MyKeyboardService.java
+├── PickImageActivity.java
+├── SettingsCorrectionsActivity.java
+├── SettingsThemeActivity.java
+├── SuggestionView.java
+├── SymbolPopupWindow.java
+└── TranslationManager.java
+```
+
+**After (Feature-Isolated Architecture):**
+```text
+com.babeltech.babelkey/
+├── clipboard/
+│   └── KeyboardClipboardManager.java
+├── core/
+│   ├── BabelKeyboardView.java
+│   ├── CrashLogger.java
+│   ├── MyKeyboardService.java
+│   └── ServiceCallback.java
+├── emoji/
+│   ├── EmojiKeyboardView.java
+│   └── EmojiManager.java
+├── gesture/
+│   └── GestureHandler.java
+├── history/
+│   └── HistoryManager.java
+├── layout/
+│   ├── KeySymbolMap.java
+│   └── SymbolPopupWindow.java
+├── settings/
+│   ├── KeyboardSettingsActivity.java
+│   └── SettingsCorrectionsActivity.java
+├── suggestion/
+│   ├── PopupManager.java
+│   ├── SmartReplyManager.java
+│   ├── SuggestionManager.java
+│   └── SuggestionView.java
+├── theme/
+│   ├── PickImageActivity.java
+│   ├── SettingsThemeActivity.java
+│   ├── SoundHapticManager.java
+│   └── ThemeManager.java
+├── translate/
+│   ├── TranslationManager.java
+│   └── TranslationService.java
+└── voice/
+    └── VoiceTypingManager.java
+```
+
+## 2. File Movements and Renames
+
+All files were moved into their respective feature packages. Public classes were kept unchanged to maintain existing behaviors.
+
+- `BabelKeyboardView.java` → `core/BabelKeyboardView.java`
+- `managers/CrashLogger.java` → `core/CrashLogger.java`
+- `MyKeyboardService.java` → `core/MyKeyboardService.java`
+- `managers/ServiceCallback.java` → `core/ServiceCallback.java`
+- `managers/KeyboardClipboardManager.java` → `clipboard/KeyboardClipboardManager.java`
+- `EmojiKeyboardView.java` → `emoji/EmojiKeyboardView.java`
+- `EmojiManager.java` → `emoji/EmojiManager.java`
+- `managers/GestureHandler.java` → `gesture/GestureHandler.java`
+- `HistoryManager.java` → `history/HistoryManager.java`
+- `KeySymbolMap.java` → `layout/KeySymbolMap.java`
+- `SymbolPopupWindow.java` → `layout/SymbolPopupWindow.java`
+- `KeyboardSettingsActivity.java` → `settings/KeyboardSettingsActivity.java`
+- `SettingsCorrectionsActivity.java` → `settings/SettingsCorrectionsActivity.java`
+- `managers/SmartReplyManager.java` → `suggestion/SmartReplyManager.java`
+- `managers/SuggestionManager.java` → `suggestion/SuggestionManager.java`
+- `SuggestionView.java` → `suggestion/SuggestionView.java`
+- `PickImageActivity.java` → `theme/PickImageActivity.java`
+- `SettingsThemeActivity.java` → `theme/SettingsThemeActivity.java`
+- `managers/SoundHapticManager.java` → `theme/SoundHapticManager.java`
+- `managers/ThemeManager.java` → `theme/ThemeManager.java`
+- `managers/TranslationService.java` → `translate/TranslationService.java`
+- `TranslationManager.java` → `translate/TranslationManager.java`
+- `managers/VoiceTypingManager.java` → `voice/VoiceTypingManager.java`
+- *No files were deleted or their internal logic changed.*
+
+## 3. Shared/Core Dependencies
+
+- **`core.ServiceCallback`**: This interface is heavily relied upon by most manager classes (`VoiceTypingManager`, `SuggestionManager`, `GestureHandler`, etc.) to communicate back to the orchestrator `MyKeyboardService`.
+- **`core.MyKeyboardService`**: Provides context, layout inflater, and lifecycle methods, but managers should ideally only interact with it via `ServiceCallback`.
+- **`theme.ThemeManager`**: Sits as a quasi-core dependency for `settings` since settings activities read/write theme configurations.
+
+## 4. Code Not Cleanly Isolated
+
+- **`MyKeyboardService` (The God Class)**: While we successfully isolated the managers into packages, `MyKeyboardService` still acts as the central orchestrator that instantiates and holds references to almost *all* feature managers. Complete isolation would require a dependency injection framework (like Hilt/Dagger) or a plugin architecture, but that would violate the "no logic rewrites" rule for this structural refactor. For now, it lives in `core` and handles cross-module routing.
+- **`SuggestionManager` & `TranslationService`**: There is a slight crossover between translation and suggestions logic (since translated text often routes through the suggestion/input stream). They are in separate packages now, but logic decoupling would require rewriting how they exchange data.
+
+## 5. Functional/Behavioral Confirmation
+
+- ✅ **No feature additions or deletions.**
+- ✅ **No logic rewrites.**
+- ✅ `AndroidManifest.xml` and `res/layout/keyboard_view.xml` were updated solely to reflect the new file locations.
+- ✅ Build tests (`./gradlew compileDebugSources`) passed without errors. 
+- ✅ Import statements across the entire project were automatically resolved and updated.
+
+## 6. Feature Maintenance Map
+
+If you want to work on X feature, these are the *only* files you'll ever need to touch:
+
+- **Core Keyboard Input & Orchestration**: `core/*`
+- **QWERTY Layout & Key Mappings**: `layout/*` (and XML layouts in `res/`)
+- **Themes, Colors, & Key Feedback (Haptics/Sound)**: `theme/*`
+- **Suggestions, Autocorrect, & Smart Reply**: `suggestion/*`
+- **Voice Typing / Dictation**: `voice/*`
+- **Emojis**: `emoji/*`
+- **Translations**: `translate/*`
+- **Clipboard Management**: `clipboard/*`
+- **Gestures / Swipes**: `gesture/*`
+- **Settings & Preferences UI**: `settings/*`

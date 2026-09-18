@@ -1,0 +1,83 @@
+<?xml version="1.0" encoding="utf-8"?>
+<!--
+  layout_clipboard_drawer.xml
+  Clipboard history drawer panel — toggled by the clipboard toolbar button.
+  Structure:
+    ┌─────────────────────────────────────────────────┐
+    │  Header: "Clipboard" title  |  [Clear All]      │
+    ├─────────────────────────────────────────────────┤
+    │  RecyclerView (clipboard cards, vertical list)  │
+    └─────────────────────────────────────────────────┘
+-->
+<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    android:layout_width="match_parent"
+    android:layout_height="240dp"
+    android:orientation="vertical"
+    android:background="#1E2328">
+
+    <!-- Header row -->
+    <LinearLayout
+        android:layout_width="match_parent"
+        android:layout_height="36dp"
+        android:orientation="horizontal"
+        android:gravity="center_vertical"
+        android:paddingStart="12dp"
+        android:paddingEnd="8dp"
+        android:background="#171B1F">
+
+        <TextView
+            android:layout_width="0dp"
+            android:layout_height="wrap_content"
+            android:layout_weight="1"
+            android:text="📋 Clipboard"
+            android:textColor="#B8BEC7"
+            android:textSize="12sp"
+            android:textStyle="bold"/>
+
+        <TextView
+            android:id="@+id/btn_clip_clear_all"
+            android:layout_width="wrap_content"
+            android:layout_height="match_parent"
+            android:text="Clear all"
+            android:gravity="center"
+            android:textColor="#7A8A9A"
+            android:textSize="11sp"
+            android:paddingStart="12dp"
+            android:paddingEnd="8dp"
+            android:background="?android:attr/selectableItemBackground"
+            android:clickable="true"
+            android:focusable="true"/>
+
+    </LinearLayout>
+
+    <!-- Divider -->
+    <View
+        android:layout_width="match_parent"
+        android:layout_height="1dp"
+        android:background="#2A3040"/>
+
+    <!-- Clipboard history list -->
+    <androidx.recyclerview.widget.RecyclerView
+        android:id="@+id/rv_clipboard"
+        android:layout_width="match_parent"
+        android:layout_height="0dp"
+        android:layout_weight="1"
+        android:overScrollMode="never"
+        android:scrollbars="none"
+        android:clipToPadding="false"
+        android:paddingTop="2dp"
+        android:paddingBottom="2dp"/>
+
+    <!-- Empty state — shown when no clips exist -->
+    <TextView
+        android:id="@+id/tv_clip_empty"
+        android:layout_width="match_parent"
+        android:layout_height="0dp"
+        android:layout_weight="1"
+        android:gravity="center"
+        android:text="No clipboard history yet.\nCopy some text to get started."
+        android:textColor="#4A5568"
+        android:textSize="12sp"
+        android:visibility="gone"/>
+
+</LinearLayout>

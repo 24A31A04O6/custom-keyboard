@@ -1,0 +1,17 @@
+<?xml version="1.0" encoding="utf-8"?>
+<!--
+    suggestion_ripple.xml
+    Bounded ripple for suggestion chips in SuggestionView.
+    The mask item clips the ripple to a rounded rectangle so it never
+    bleeds outside the chip boundary.
+-->
+<ripple xmlns:android="http://schemas.android.com/apk/res/android"
+    android:color="?attr/colorControlHighlight">
+    <!-- Rounded mask that constrains the ripple effect -->
+    <item android:id="@android:id/mask">
+        <shape android:shape="rectangle">
+            <corners android:radius="16dp" />
+            <solid android:color="@android:color/white" />
+        </shape>
+    </item>
+</ripple>

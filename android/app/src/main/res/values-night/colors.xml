@@ -1,0 +1,22 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+    <!-- Dark/night overrides — Gboard-inspired palette -->
+    <color name="keyboard_background">#282B2D</color>
+    <color name="key_background_normal">#3C3F41</color>
+    <color name="key_background_pressed">#5A5D5F</color>
+    <color name="key_background_special">#22242B</color>
+    <color name="key_text_color">#E8EAED</color>
+    <color name="suggestion_bar_background">#282B2D</color>
+    <color name="suggestion_divider_color">#4A4D50</color>
+    <color name="suggestion_chip_text">#9AA0A6</color>
+    <color name="suggestion_chip_text_bold">#FFFFFF</color>
+    <color name="clipboard_panel_background">#22242B</color>
+    <color name="phrases_panel_background">#22242B</color>
+    <color name="stats_panel_background">#22242B</color>
+    <color name="settings_panel_background">#1E2124</color>
+    <color name="ai_chip_background">#22242B</color>
+    <color name="ai_chip_text">#E8EAED</color>
+    <color name="toolbar_background">#1E2124</color>
+    <color name="emoji_panel_background">#282B2D</color>
+    <color name="emoji_tab_background">#1E2124</color>
+</resources>

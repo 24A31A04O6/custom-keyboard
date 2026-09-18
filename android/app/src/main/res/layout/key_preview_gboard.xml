@@ -1,0 +1,21 @@
+<?xml version="1.0" encoding="utf-8"?>
+<!--
+    KeyboardView requires the ROOT element to be a TextView.
+    Our Gboard-style customization is applied via textSize, textColor,
+    and background — the custom positioning is done programmatically.
+-->
+<TextView
+    xmlns:android="http://schemas.android.com/apk/res/android"
+    android:layout_width="wrap_content"
+    android:layout_height="wrap_content"
+    android:minWidth="48dp"
+    android:minHeight="56dp"
+    android:gravity="center"
+    android:textSize="26sp"
+    android:textColor="#FFFFFF"
+    android:textStyle="bold"
+    android:background="@drawable/key_preview_bg"
+    android:paddingStart="12dp"
+    android:paddingEnd="12dp"
+    android:paddingTop="8dp"
+    android:paddingBottom="8dp"/>

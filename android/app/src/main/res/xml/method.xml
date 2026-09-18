@@ -1,0 +1,18 @@
+<?xml version="1.0" encoding="utf-8"?>
+<!--
+    method.xml defines the IME subtypes (languages/modes).
+    Each subtype appears in system settings under the keyboard selector.
+    - QWERTY subtype for English
+    - The imeSubtypeMode="keyboard" is required for standard keyboards
+-->
+<input-method xmlns:android="http://schemas.android.com/apk/res/android"
+    android:settingsActivity=""
+    android:isDefault="false">
+
+    <subtype
+        android:label="@string/subtype_en_US"
+        android:imeSubtypeLocale="en_US"
+        android:imeSubtypeMode="keyboard"
+        android:isAsciiCapable="true" />
+
+</input-method>

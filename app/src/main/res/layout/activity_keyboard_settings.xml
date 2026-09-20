@@ -266,7 +266,7 @@
                         android:paddingTop="2dp"/>
                 </LinearLayout>
 
-                <com.google.android.material.materialswitch.MaterialSwitch
+                <androidx.appcompat.widget.SwitchCompat
                     android:id="@+id/switch_custom_bg"
                     android:layout_width="wrap_content"
                     android:layout_height="wrap_content"

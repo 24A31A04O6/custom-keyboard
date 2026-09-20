@@ -46,7 +46,7 @@
         <LinearLayout
             android:id="@+id/toolbar_strip"
             android:layout_width="match_parent"
-            android:layout_height="40dp"
+            android:layout_height="48dp"
             android:orientation="horizontal"
             android:background="@color/toolbar_background"
             android:gravity="center_vertical"
@@ -57,97 +57,105 @@
             <ImageView
                 android:id="@+id/btn_tool_grid"
                 android:layout_width="0dp"
-                android:layout_height="32dp"
+                android:layout_height="48dp"
                 android:layout_weight="1"
+                android:contentDescription="Menu"
                 android:src="@drawable/ic_tool_grid"
                 android:scaleType="centerInside"
                 android:tint="@color/toolbar_icon_inactive"
                 android:background="?android:attr/selectableItemBackgroundBorderless"
-                android:padding="6dp"/>
+                android:padding="5dp"/>
 
             <!-- Emoji -->
             <ImageView
                 android:id="@+id/btn_tool_emoji"
                 android:layout_width="0dp"
-                android:layout_height="32dp"
+                android:layout_height="48dp"
                 android:layout_weight="1"
+                android:contentDescription="Emoji"
                 android:src="@drawable/ic_sticker"
                 android:scaleType="centerInside"
                 android:tint="@color/toolbar_icon_inactive"
                 android:background="?android:attr/selectableItemBackgroundBorderless"
-                android:padding="6dp"/>
+                android:padding="5dp"/>
 
-            <!-- Cursor / Text-select -->
+            <!-- Settings (Gear) -->
             <ImageView
                 android:id="@+id/btn_tool_cursor"
                 android:layout_width="0dp"
-                android:layout_height="32dp"
+                android:layout_height="48dp"
                 android:layout_weight="1"
+                android:contentDescription="Settings"
                 android:src="@drawable/ic_tool_settings" 
                 android:scaleType="centerInside"
                 android:tint="@color/toolbar_icon_inactive"
                 android:background="?android:attr/selectableItemBackgroundBorderless"
-                android:padding="6dp"/>
+                android:padding="5dp"/>
 
-            <!-- GIF / Keyboard -->
+            <!-- Theme (Palette) -->
             <ImageView
                 android:id="@+id/btn_tool_gif"
                 android:layout_width="0dp"
-                android:layout_height="32dp"
+                android:layout_height="48dp"
                 android:layout_weight="1"
+                android:contentDescription="Theme"
                 android:src="@drawable/ic_tool_palette" 
                 android:scaleType="centerInside"
                 android:tint="@color/toolbar_icon_inactive"
                 android:background="?android:attr/selectableItemBackgroundBorderless"
-                android:padding="6dp"/>
+                android:padding="5dp"/>
 
             <!-- Clipboard -->
             <ImageView
                 android:id="@+id/btn_tool_clipboard"
                 android:layout_width="0dp"
-                android:layout_height="32dp"
+                android:layout_height="48dp"
                 android:layout_weight="1"
-                android:src="@drawable/ic_tool_palette" 
+                android:contentDescription="Clipboard"
+                android:src="@drawable/ic_clipboard" 
                 android:scaleType="centerInside"
                 android:tint="@color/toolbar_icon_inactive"
                 android:background="?android:attr/selectableItemBackgroundBorderless"
-                android:padding="6dp"/>
+                android:padding="5dp"/>
 
             <!-- Translate -->
             <ImageView
                 android:id="@+id/btn_tool_translate"
                 android:layout_width="0dp"
-                android:layout_height="32dp"
+                android:layout_height="48dp"
                 android:layout_weight="1"
+                android:contentDescription="Translate"
                 android:src="@drawable/ic_tool_translate"
                 android:scaleType="centerInside"
                 android:tint="@color/toolbar_icon_inactive"
                 android:background="?android:attr/selectableItemBackgroundBorderless"
-                android:padding="6dp"/>
+                android:padding="5dp"/>
 
             <!-- Mic -->
             <ImageView
                 android:id="@+id/btn_tool_mic"
                 android:layout_width="0dp"
-                android:layout_height="32dp"
+                android:layout_height="48dp"
                 android:layout_weight="1"
+                android:contentDescription="Voice Typing"
                 android:src="@drawable/ic_tool_mic"
                 android:scaleType="centerInside"
                 android:tint="@color/toolbar_icon_inactive"
                 android:background="?android:attr/selectableItemBackgroundBorderless"
-                android:padding="6dp"/>
+                android:padding="5dp"/>
                 
             <!-- Second Grid / More Icons indicator -->
             <ImageView
                 android:id="@+id/btn_tool_more"
                 android:layout_width="0dp"
-                android:layout_height="32dp"
+                android:layout_height="48dp"
                 android:layout_weight="1"
+                android:contentDescription="More"
                 android:src="@drawable/ic_tool_grid"
                 android:scaleType="centerInside"
                 android:tint="@color/toolbar_icon_inactive"
                 android:background="?android:attr/selectableItemBackgroundBorderless"
-                android:padding="6dp"/>
+                android:padding="5dp"/>
 
         </LinearLayout>
         <!-- End toolbar_strip -->
@@ -159,7 +167,7 @@
         <HorizontalScrollView
             android:id="@+id/toolbar_scroll_legacy"
             android:layout_width="match_parent"
-            android:layout_height="0dp"
+            android:layout_height="48dp"
             android:visibility="gone"
             android:scrollbars="none">
             <LinearLayout
@@ -356,8 +364,8 @@
                 android:id="@+id/keyboard_view"
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
-                android:keyTextSize="18sp"
-                android:labelTextSize="14sp"
+                android:keyTextSize="21sp"
+                android:labelTextSize="15sp"
                 android:keyTextColor="#E8EAED"
                 android:keyBackground="@drawable/key_background_normal"
                 android:shadowColor="#00000000"

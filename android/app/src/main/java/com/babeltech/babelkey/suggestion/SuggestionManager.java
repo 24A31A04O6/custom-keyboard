@@ -44,7 +44,7 @@ public class SuggestionManager implements SuggestionView.SuggestionClickListener
     private static final String SEP = "|||";
 
     public final Map<String, List<String>> DICT        = new HashMap<>();
-    public final Map<String, List<String>> TELUGU_DICT = new HashMap<>();
+    public final Map<String, List<String>> TEL_ENG_DICT = new HashMap<>();
     public final Map<String, String> TRANSLATE_DICT    = new HashMap<>();
     public final Map<String, String> AUTOCORRECT_DICT  = new HashMap<>();
     public final Map<String, String> EMOJI_SUGGESTIONS = new HashMap<>();
@@ -93,7 +93,8 @@ public class SuggestionManager implements SuggestionView.SuggestionClickListener
     public void loadAll() {
         loadTransDict(); loadKVDict(R.raw.autocorrect_dict,AUTOCORRECT_DICT,"AUTOCORRECT");
         loadKVDict(R.raw.emoji_suggestions,EMOJI_SUGGESTIONS,"EMOJI");
-        loadPrefixDict(R.raw.suggestions_dict,DICT,"DICT"); loadPrefixDict(R.raw.telugu_dict,TELUGU_DICT,"TELUGU");
+        loadPrefixDict(R.raw.suggestions_dict,DICT,"DICT");
+        loadPrefixDict(R.raw.tel_eng_dict,TEL_ENG_DICT,"TEL_ENG");
         learnedWords=new HashSet<>(prefs.getStringSet(PREF_LEARNED,new HashSet<>()));
         personalDict=new HashSet<>(prefs.getStringSet(PREF_PERSONAL,new HashSet<>()));
         loadShortcuts(); loadPhrases(); loadStats();
@@ -116,15 +117,64 @@ public class SuggestionManager implements SuggestionView.SuggestionClickListener
     public void setAiEnabled(boolean e) { aiEnabled=e; }
     public boolean isAiEnabled() { return aiEnabled; }
 
+    private boolean isAlphabeticLayer = true;
+
+    public void setLayer(int mode) {
+        this.isAlphabeticLayer = (mode == MyKeyboardService.MODE_QWERTY);
+        if (!isAlphabeticLayer) {
+            currentWord.setLength(0);
+            clearSuggestions();
+        }
+    }
+
+    public boolean isAlphabeticLayer() {
+        return isAlphabeticLayer;
+    }
+
     // Suggestions
     public void updateSuggestions() {
-        if(sugView==null) return; if(currentWord.length()==0){sugView.clear();return;}
+        if(sugView==null) return;
+        if(!isAlphabeticLayer) { sugView.clear(); return; }
+        if(currentWord.length()==0){sugView.clear();return;}
         String prefix=currentWord.toString().toLowerCase();
         List<String> res=new ArrayList<>();
-        for(int len=Math.min(prefix.length(),6);len>=1;len--){String sub=prefix.substring(0,len);List<String>tm=TELUGU_DICT.get(sub);if(tm!=null){for(String w:tm)if(!res.contains(w)){res.add(w);if(res.size()>=3)break;}if(!res.isEmpty())break;}}
         String emo=EMOJI_SUGGESTIONS.get(prefix);
-        if(emo!=null){List<String>c=new ArrayList<>(Arrays.asList(emo.split(" ")));c.addAll(res);sugView.setSuggestions(c);return;}
-        if(res.isEmpty()&&prefix.length()>=2){for(Map.Entry<String,List<String>>e:DICT.entrySet()){if(prefix.startsWith(e.getKey())||e.getKey().startsWith(prefix)){for(String w:e.getValue())if(w.startsWith(prefix)&&!res.contains(w)){res.add(w);if(res.size()>=3)break;}}if(res.size()>=3)break;}}
+        if(emo!=null){List<String>c=new ArrayList<>(Arrays.asList(emo.split(" ")));sugView.setSuggestions(c);return;}
+
+        // 1. Check Tel-Eng Romanized dictionary (e.g. nen -> nenu, nuv -> nuvvu, ela -> ela)
+        List<String> telMatches = TEL_ENG_DICT.get(prefix);
+        if (telMatches != null) {
+            for (String w : telMatches) {
+                if (!res.contains(w)) {
+                    res.add(w);
+                    if (res.size() >= 3) break;
+                }
+            }
+        }
+
+        // 2. Check English dictionary
+        if(prefix.length()>=1){
+            for(Map.Entry<String,List<String>>e:DICT.entrySet()){
+                if(prefix.startsWith(e.getKey())||e.getKey().startsWith(prefix)){
+                    for(String w:e.getValue()) {
+                        if(w.startsWith(prefix)&&!res.contains(w)){
+                            res.add(w);
+                            if(res.size()>=5) break;
+                        }
+                    }
+                }
+                if(res.size()>=5) break;
+            }
+        }
+
+        // 3. Personal dictionary
+        for(String w:personalDict){
+            if(w.toLowerCase().startsWith(prefix)&&!res.contains(w)){
+                res.add(w);
+                if(res.size()>=5) break;
+            }
+        }
+
         if(!res.isEmpty())sugView.setSuggestions(res);else sugView.clear();
     }
 
@@ -178,6 +228,7 @@ public class SuggestionManager implements SuggestionView.SuggestionClickListener
 
     // AutoCorrect
     public void handleAutoCorrect() {
+        if (!isAlphabeticLayer) return;
         InputConnection ic=cb.getInputConnection(); if(ic==null) return;
         CharSequence bef=ic.getTextBeforeCursor(500,0); if(bef==null||bef.length()==0) return;
         String full=bef.toString(); int ss=0; for(int i=full.length()-1;i>=0;i--){char c=full.charAt(i);if(c=='.'||c=='!'||c=='?'||c=='\n'){ss=i+1;break;}}
@@ -200,13 +251,17 @@ public class SuggestionManager implements SuggestionView.SuggestionClickListener
 
     // Shortcut
     public boolean checkShortcut(InputConnection ic) {
+        if (!isAlphabeticLayer) return false;
         if(ic==null||currentWord.length()==0) return false;
         String e=shortcuts.get(currentWord.toString().toLowerCase()); if(e==null) return false;
         ic.deleteSurroundingText(currentWord.length(),0); ic.commitText(e+" ",1); currentWord.setLength(0); clearSuggestions(); return true;
     }
 
     // Learning
-    public void learnWord() { if(currentWord.length()==0) return; String w=currentWord.toString().toLowerCase(); if(AUTOCORRECT_DICT.containsKey(w)&&!learnedWords.contains(w)){learnedWords.add(w);prefs.edit().putStringSet(PREF_LEARNED,learnedWords).apply();} }
+    public void learnWord() {
+        if (!isAlphabeticLayer) return;
+        if(currentWord.length()==0) return; String w=currentWord.toString().toLowerCase(); if(AUTOCORRECT_DICT.containsKey(w)&&!learnedWords.contains(w)){learnedWords.add(w);prefs.edit().putStringSet(PREF_LEARNED,learnedWords).apply();}
+    }
     public void addToPersonalDict(String w) { if(w==null||w.isEmpty())return; personalDict.add(w.toLowerCase()); prefs.edit().putStringSet(PREF_PERSONAL,personalDict).apply(); }
 
     // Grammar

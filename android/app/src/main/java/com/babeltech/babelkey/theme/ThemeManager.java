@@ -86,6 +86,9 @@ public class ThemeManager {
         applyToolbarColor(tc); applySuggestionBarColor(sc);
         if (voicePanel != null) voicePanel.setBackgroundColor(Color.parseColor(tc));
         if (keyPreviewText != null) keyPreviewText.setBackgroundResource(previewRes);
+        if (kv instanceof com.babeltech.babelkey.core.BabelKeyboardView) {
+            ((com.babeltech.babelkey.core.BabelKeyboardView) kv).setCustomKeyTextColor(dark ? 0xFFE8EAED : 0xFF202124);
+        }
     }
 
     private void applyCustomImage() {

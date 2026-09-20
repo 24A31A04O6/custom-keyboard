@@ -86,6 +86,9 @@ public class ThemeManager {
         applyToolbarColor(tc); applySuggestionBarColor(sc);
         if (voicePanel != null) voicePanel.setBackgroundColor(Color.parseColor(tc));
         if (keyPreviewText != null) keyPreviewText.setBackgroundResource(previewRes);
+        if (kv instanceof com.babeltech.babelkey.core.BabelKeyboardView) {
+            ((com.babeltech.babelkey.core.BabelKeyboardView) kv).setCustomKeyTextColor(dark ? 0xFFE8EAED : 0xFF202124);
+        }
     }
 
     private void applyCustomImage() {
@@ -164,6 +167,12 @@ public class ThemeManager {
     public void applySuggestionBarColor(String hex) { if(root==null) return; View b=root.findViewById(R.id.suggestion_scroll); if(b!=null) b.setBackgroundColor(Color.parseColor(hex)); }
 
     public void setTheme(int theme) { currentTheme=theme; prefs.edit().putInt(PREF_THEME,theme).apply(); applyCurrentTheme(); }
+    public void reloadPreferences() {
+        currentTheme = prefs.getInt(PREF_THEME, THEME_DARK);
+        bgUri = prefs.getString(PREF_BG_URI, null);
+        isDark = (currentTheme != THEME_LIGHT);
+        applyCurrentTheme();
+    }
     public void setCustomBgUri(String uri) { bgUri=uri; prefs.edit().putString(PREF_BG_URI,uri).apply(); if(currentTheme==THEME_CUSTOM_IMAGE) applyCurrentTheme(); }
     public int getCurrentTheme() { return currentTheme; }
     public boolean isDark() { return isDark; }

@@ -93,6 +93,7 @@ public class MyKeyboardService extends InputMethodService
 
     // Views
     private BabelKeyboardView  keyboardView;
+    private EditorInfo         currentEditorInfo = null;
     private LinearLayout  keyboardRoot;
     private LinearLayout  suggestionContainer, clipboardContainer, phrasesContainer;
     private LinearLayout  clipboardPanel, otpBanner, grammarBanner, statsContainer;
@@ -238,10 +239,10 @@ public class MyKeyboardService extends InputMethodService
             android.view.ViewGroup.LayoutParams.WRAP_CONTENT, android.view.ViewGroup.LayoutParams.WRAP_CONTENT);
         keyPreviewPopup.setBackgroundDrawable(null); keyPreviewPopup.setTouchable(false);
         keyPreviewPopup.setFocusable(false); keyPreviewPopup.setOutsideTouchable(false);
-        qwertyKeyboard       = new com.babeltech.babelkey.layout.ResponsiveKeyboardLayout(this, R.xml.keyboard_qwerty);
-        symbolsKeyboard      = new com.babeltech.babelkey.layout.ResponsiveKeyboardLayout(this, R.xml.keyboard_symbols);
-        symbolsShiftKeyboard = new com.babeltech.babelkey.layout.ResponsiveKeyboardLayout(this, R.xml.keyboard_symbols_shift);
-        numpadKeyboard       = new com.babeltech.babelkey.layout.ResponsiveKeyboardLayout(this, R.xml.keyboard_numpad);
+        qwertyKeyboard       = new Keyboard(this, R.xml.keyboard_qwerty);
+        symbolsKeyboard      = new Keyboard(this, R.xml.keyboard_symbols);
+        symbolsShiftKeyboard = new Keyboard(this, R.xml.keyboard_symbols_shift);
+        numpadKeyboard       = new Keyboard(this, R.xml.keyboard_numpad);
         keyboardView.setOnKeyboardActionListener(this); keyboardView.setPreviewEnabled(false);
         // Touch events are handled by GestureHandler
 
@@ -290,28 +291,141 @@ public class MyKeyboardService extends InputMethodService
         return root;
     }
 
-    @Override public void onStartInput(EditorInfo a, boolean r) { super.onStartInput(a, r); suggManager.currentWord.setLength(0); }
+    @Override public void onStartInput(EditorInfo a, boolean r) {
+        super.onStartInput(a, r);
+        currentEditorInfo = a;
+        updateEnterKey(a);
+        suggManager.currentWord.setLength(0);
+        suggManager.clearSuggestions();
+        if (keyboardView != null) keyboardView.cleanupAllPointers();
+        if (gestureHandler != null) gestureHandler.reset();
+        if (symbolPopup != null && symbolPopup.isShowing()) symbolPopup.dismiss();
+    }
+
     @Override public void onStartInputView(EditorInfo i, boolean r) {
-        super.onStartInputView(i, r); autoCapitalize(); updateEnterKey(i);
+        super.onStartInputView(i, r);
+        if (keyboardView != null) keyboardView.cleanupAllPointers();
+        if (gestureHandler != null) gestureHandler.reset();
+        if (symbolPopup != null && symbolPopup.isShowing()) symbolPopup.dismiss();
+        hideAllPanels();
+        switchToQwerty();
+        setShift(SHIFT_OFF);
+        autoCapitalize();
+        updateEnterKey(i);
         if (suggManager.isAiEnabled()) handler.postDelayed(() -> suggManager.updateAiReplies(getCurrentInputConnection()), 500);
     }
+
+    @Override public void onFinishInputView(boolean finishingInput) {
+        super.onFinishInputView(finishingInput);
+        if (keyboardView != null) keyboardView.cleanupAllPointers();
+        if (gestureHandler != null) gestureHandler.reset();
+        if (symbolPopup != null && symbolPopup.isShowing()) symbolPopup.dismiss();
+        hideAllPanels();
+        switchToQwerty();
+    }
+
     @Override public void onUpdateSelection(int oSS, int oSE, int nSS, int nSE, int cS, int cE) {
         super.onUpdateSelection(oSS, oSE, nSS, nSE, cS, cE);
         if (suggManager.currentWord.length() > 0 && (Math.abs(nSS - oSE) > 1 || nSS != nSE)) {
             suggManager.currentWord.setLength(0); suggManager.clearSuggestions();
         }
     }
+
     @Override public void onFinishInput() {
-        super.onFinishInput(); suggManager.currentWord.setLength(0); suggManager.clearSuggestions();
-        hideAllPanels(); gestureHandler.exitTrackpad();
-        voiceManager.exitVoiceTypingMode();
-        exitResize();
-        if (keyboardView != null) switchToQwerty();
+        super.onFinishInput();
+        suggManager.currentWord.setLength(0);
+        suggManager.clearSuggestions();
+        if (keyboardView != null) keyboardView.cleanupAllPointers();
+        if (gestureHandler != null) gestureHandler.reset();
+        if (symbolPopup != null && symbolPopup.isShowing()) symbolPopup.dismiss();
+        hideAllPanels();
+        switchToQwerty();
     }
+
     @Override public void onDestroy() {
-        super.onDestroy(); handler.removeCallbacksAndMessages(null);
-        clipManager.destroy(); voiceManager.destroy(); soundManager.destroy(); gestureHandler.destroy();
+        super.onDestroy();
+        handler.removeCallbacksAndMessages(null);
+        if (symbolPopup != null && symbolPopup.isShowing()) symbolPopup.dismiss();
+        if (keyboardView != null) keyboardView.destroy();
+        if (gestureHandler != null) gestureHandler.destroy();
+        clipManager.destroy(); voiceManager.destroy(); soundManager.destroy();
         themeManager.detach(); suggManager.detach();
+    }
+
+    @Override
+    public boolean onEvaluateInputViewShown() {
+        android.content.res.Configuration config = getResources().getConfiguration();
+        if (config.keyboard == android.content.res.Configuration.KEYBOARD_QWERTY &&
+                config.hardKeyboardHidden == android.content.res.Configuration.HARDKEYBOARDHIDDEN_NO) {
+            return false;
+        }
+        return super.onEvaluateInputViewShown();
+    }
+
+    @Override
+    public void onConfigurationChanged(android.content.res.Configuration newConfig) {
+        super.onConfigurationChanged(newConfig);
+        if (symbolPopup != null && symbolPopup.isShowing()) symbolPopup.dismiss();
+        if (gestureHandler != null) gestureHandler.reset();
+        if (keyboardView != null) keyboardView.cleanupAllPointers();
+        hideAllPanels();
+        boolean isHardwareKeyboardPresent = newConfig.keyboard == android.content.res.Configuration.KEYBOARD_QWERTY &&
+                newConfig.hardKeyboardHidden == android.content.res.Configuration.HARDKEYBOARDHIDDEN_NO;
+        if (isHardwareKeyboardPresent) {
+            requestHideSelf(0);
+        }
+    }
+
+    @Override
+    public boolean onKeyDown(int keyCode, KeyEvent event) {
+        if (keyCode == KeyEvent.KEYCODE_BACK) {
+            if (symbolPopup != null && symbolPopup.isShowing()) {
+                symbolPopup.dismiss();
+                return true;
+            }
+            if (gestureHandler != null && gestureHandler.isInTrackpad()) {
+                gestureHandler.exitTrackpad();
+                return true;
+            }
+            if (isAnyPanelVisible()) {
+                hideAllPanels();
+                return true;
+            }
+            if (currentMode != MODE_QWERTY) {
+                switchToQwerty();
+                return true;
+            }
+            if (isInputViewShown()) {
+                requestHideSelf(0);
+                return true;
+            }
+        }
+        // Hardware keyboard input tracking
+        if (keyCode == KeyEvent.KEYCODE_DEL) {
+            if (suggManager.currentWord.length() > 0) {
+                suggManager.currentWord.setLength(suggManager.currentWord.length() - 1);
+                suggManager.updateSuggestions(suggManager.currentWord.toString());
+            }
+        } else if (keyCode == KeyEvent.KEYCODE_SPACE || keyCode == KeyEvent.KEYCODE_ENTER) {
+            suggManager.currentWord.setLength(0);
+            suggManager.clearSuggestions();
+        } else if (event != null && event.getUnicodeChar() > 0) {
+            char c = (char) event.getUnicodeChar();
+            if (Character.isLetterOrDigit(c)) {
+                suggManager.currentWord.append(c);
+                suggManager.updateSuggestions(suggManager.currentWord.toString());
+            }
+        }
+        return super.onKeyDown(keyCode, event);
+    }
+
+    private boolean isAnyPanelVisible() {
+        return (clipboardPanel != null && clipboardPanel.getVisibility() == View.VISIBLE)
+                || (phrasesPanel != null && phrasesPanel.getVisibility() == View.VISIBLE)
+                || (statsPanel != null && statsPanel.getVisibility() == View.VISIBLE)
+                || (settingsPanel != null && settingsPanel.getVisibility() == View.VISIBLE)
+                || (grammarBanner != null && grammarBanner.getVisibility() == View.VISIBLE)
+                || (aiRepliesPanel != null && aiRepliesPanel.getVisibility() == View.VISIBLE);
     }
 
     @Override public void onPress(int c) {
@@ -397,7 +511,7 @@ public class MyKeyboardService extends InputMethodService
         }
     }
     private void handleEnter(InputConnection ic) {
-        EditorInfo ei = getCurrentInputEditorInfo();
+        EditorInfo ei = currentEditorInfo != null ? currentEditorInfo : getCurrentInputEditorInfo();
         if (ei != null) {
             int a = ei.imeOptions & EditorInfo.IME_MASK_ACTION;
             boolean ml = (ei.inputType & android.text.InputType.TYPE_TEXT_FLAG_MULTI_LINE) != 0;
@@ -447,6 +561,14 @@ public class MyKeyboardService extends InputMethodService
         }
 
         // ── Normal space ────────────────────────────────────────────────────
+        if (currentMode != MODE_QWERTY) {
+            ic.commitText(" ", 1);
+            gestureHandler.recordSpaceTap();
+            suggManager.currentWord.setLength(0);
+            suggManager.clearSuggestions();
+            return;
+        }
+
         suggManager.learnWord();
         ic.commitText(" ", 1);
         gestureHandler.recordSpaceTap(); // stamp time for next double-tap check
@@ -462,8 +584,19 @@ public class MyKeyboardService extends InputMethodService
         if (Character.isLetter(c) && (shiftState == SHIFT_ON || shiftState == SHIFT_CAPS)) c = Character.toUpperCase(c);
         ic.commitText(String.valueOf(c), 1);
         if (shiftState == SHIFT_ON) setShift(SHIFT_OFF);
-        if (Character.isLetter(c)) { suggManager.currentWord.append(Character.toLowerCase(c)); suggManager.updateSuggestions(); }
-        else { suggManager.currentWord.setLength(0); suggManager.clearSuggestions(); if (c == '.' || c == '!' || c == '?') autoCapitalize(); }
+        if (Character.isLetter(c)) {
+            if (currentMode == MODE_QWERTY) {
+                suggManager.currentWord.append(Character.toLowerCase(c));
+                suggManager.updateSuggestions();
+            } else {
+                suggManager.currentWord.setLength(0);
+                suggManager.clearSuggestions();
+            }
+        } else {
+            suggManager.currentWord.setLength(0);
+            suggManager.clearSuggestions();
+            if (c == '.' || c == '!' || c == '?') autoCapitalize();
+        }
     }
 
     @Override public void onSuggestionClicked(String word, int i) {
@@ -479,12 +612,13 @@ public class MyKeyboardService extends InputMethodService
         keyboardView.setVisibility(View.VISIBLE); removeEmoji();
         if (qwertyKeyboard != null) { qwertyKeyboard.setShifted(shiftState != SHIFT_OFF); keyboardView.invalidateAllKeys(); }
         gestureHandler.setCurrentMode(currentMode);
+        suggManager.setLayer(currentMode);
+        updateEnterKey(currentEditorInfo);
     }
-    private void switchToSymbols() { currentMode = MODE_SYMBOLS; flipTo(FLIPPER_KB); keyboardView.setKeyboard(symbolsKeyboard); keyboardView.setVisibility(View.VISIBLE); gestureHandler.setCurrentMode(currentMode); }
-    private void switchToNumpad()  { currentMode = MODE_NUMPAD;  flipTo(FLIPPER_KB); keyboardView.setKeyboard(numpadKeyboard);  keyboardView.setVisibility(View.VISIBLE); gestureHandler.setCurrentMode(currentMode); }
-    private void switchToSymShift(){ currentMode = MODE_SYM_SHIFT; flipTo(FLIPPER_KB); keyboardView.setKeyboard(symbolsShiftKeyboard); keyboardView.setVisibility(View.VISIBLE); gestureHandler.setCurrentMode(currentMode); }
+    private void switchToSymbols() { currentMode = MODE_SYMBOLS; flipTo(FLIPPER_KB); keyboardView.setKeyboard(symbolsKeyboard); keyboardView.setVisibility(View.VISIBLE); gestureHandler.setCurrentMode(currentMode); suggManager.setLayer(currentMode); updateEnterKey(currentEditorInfo); }
+    private void switchToNumpad()  { currentMode = MODE_NUMPAD;  flipTo(FLIPPER_KB); keyboardView.setKeyboard(numpadKeyboard);  keyboardView.setVisibility(View.VISIBLE); gestureHandler.setCurrentMode(currentMode); suggManager.setLayer(currentMode); updateEnterKey(currentEditorInfo); }
+    private void switchToSymShift(){ currentMode = MODE_SYM_SHIFT; flipTo(FLIPPER_KB); keyboardView.setKeyboard(symbolsShiftKeyboard); keyboardView.setVisibility(View.VISIBLE); gestureHandler.setCurrentMode(currentMode); suggManager.setLayer(currentMode); updateEnterKey(currentEditorInfo); }
     private void switchToEmoji() {
-        hideAllPanels();
         currentMode = MODE_EMOJI; removeEmoji();
         emojiKeyboardView = new EmojiKeyboardView(this, this, themeManager.isDark());
         emojiPanel = emojiKeyboardView.getView();
@@ -496,6 +630,7 @@ public class MyKeyboardService extends InputMethodService
             emojiPanel.setLayoutParams(lp); keyboardView.setVisibility(View.GONE); keyboardRoot.addView(emojiPanel);
         }
         gestureHandler.setCurrentMode(currentMode);
+        suggManager.setLayer(currentMode);
     }
     private void removeEmoji() { if (emojiPanel != null) { if (emojiFlipperHost != null) emojiFlipperHost.removeView(emojiPanel); else keyboardRoot.removeView(emojiPanel); emojiPanel = null; emojiKeyboardView = null; } }
 
@@ -515,18 +650,24 @@ public class MyKeyboardService extends InputMethodService
     private void handleTBClick(String key) {
         switch (key) {
             case "translate":   suggManager.handleTranslate();   break;
-            case "autocorrect": suggManager.handleAutoCorrect(); break;
+            case "autocorrect":
+                if (currentMode != MODE_QWERTY) {
+                    android.widget.Toast.makeText(this, "Autocorrect is disabled on symbol/numbers layer", android.widget.Toast.LENGTH_SHORT).show();
+                    return;
+                }
+                suggManager.handleAutoCorrect();
+                break;
             case "undo":        suggManager.handleUndo();        break;
-            case "emoji":       if (currentMode == MODE_EMOJI) switchToQwerty(); else switchToEmoji(); break;
+            case "emoji":       switchToEmoji();                 break;
             case "clipboard":   clipManager.toggleDrawer();      break;
-            case "phrases":     toggleMiscPanel(phrasesPanel, () -> suggManager.togglePhrases()); break;
-            case "stats":       toggleMiscPanel(statsPanel, () -> suggManager.toggleStats()); break;
-            case "settings":    toggleSettings();                break;
+            case "phrases":     suggManager.togglePhrases();     break;
+            case "stats":       suggManager.toggleStats();       break;
+            case "settings":
+            case "theme":       launchSettingsActivity();        break;
             case "voice":       voiceManager.handleVoiceTyping(); break;
         }
     }
     private void hideAllPanels() {
-        if (toolbarCustomizerPanel != null) toolbarCustomizerPanel.setVisibility(View.GONE);
         if (clipboardPanel  != null) clipboardPanel.setVisibility(View.GONE);
         if (phrasesPanel    != null) phrasesPanel.setVisibility(View.GONE);
         if (statsPanel      != null) statsPanel.setVisibility(View.GONE);
@@ -536,19 +677,18 @@ public class MyKeyboardService extends InputMethodService
         if (clipManager     != null) clipManager.hideDrawer();
         if (symbolPopup     != null) symbolPopup.dismiss();
     }
-    private void toggleSettings() {
-        if (contentFlipper == null) return;
-        if (contentFlipper.getDisplayedChild() == FLIPPER_THEME) switchToQwerty();
-        else { hideAllPanels(); flipTo(FLIPPER_THEME); }
+    private void launchSettingsActivity() {
+        try {
+            Intent i = new Intent(this, KeyboardSettingsActivity.class);
+            i.setFlags(Intent.FLAG_ACTIVITY_NEW_TASK | Intent.FLAG_ACTIVITY_CLEAR_TOP);
+            startActivity(i);
+        } catch (Exception ex) {
+            android.util.Log.e("MyKeyboardService", "Could not start KeyboardSettingsActivity", ex);
+            CrashLogger.logError("MyKeyboardService", "launchSettings", ex.getMessage(), ex);
+            toggleSettings();
+        }
     }
-
-    private void toggleMiscPanel(View panel, Runnable showPanel) {
-        if (panel == null || contentFlipper == null) return;
-        boolean open = contentFlipper.getDisplayedChild() == FLIPPER_MISC && panel.getVisibility() == View.VISIBLE;
-        hideAllPanels();
-        if (open) switchToQwerty();
-        else { showPanel.run(); flipTo(FLIPPER_MISC); }
-    }
+    private void toggleSettings() { if (settingsPanel == null) return; boolean v = settingsPanel.getVisibility() == View.VISIBLE; settingsPanel.setVisibility(v ? View.GONE : View.VISIBLE); }
 
     private void wireSettingsPanel() {
         if (keyboardRoot == null) return;
@@ -580,14 +720,57 @@ public class MyKeyboardService extends InputMethodService
     private void updateBgBtn(View v) { if (v instanceof android.widget.Button) { boolean e = prefs.getBoolean("customBgEnabled", false); ((android.widget.Button) v).setText(e ? "Disable Photo BG" : "Enable Photo BG"); } }
 
     private void updateEnterKey(EditorInfo info) {
-        if (info == null || qwertyKeyboard == null) return;
+        if (info == null) return;
+        currentEditorInfo = info;
+        if (qwertyKeyboard == null) return;
         int action = info.imeOptions & EditorInfo.IME_MASK_ACTION;
         boolean ml = (info.inputType & android.text.InputType.TYPE_TEXT_FLAG_MULTI_LINE) != 0;
         boolean ne = (info.imeOptions & EditorInfo.IME_FLAG_NO_ENTER_ACTION) != 0;
-        String lbl = null; android.graphics.drawable.Drawable icon = null;
-        if (!ml && !ne) { switch (action) { case EditorInfo.IME_ACTION_SEARCH: lbl = "\uD83D\uDD0D"; break; case EditorInfo.IME_ACTION_GO: lbl = "Go"; break; case EditorInfo.IME_ACTION_SEND: lbl = "Send"; break; case EditorInfo.IME_ACTION_NEXT: lbl = "Next"; break; case EditorInfo.IME_ACTION_DONE: lbl = "\u2713"; break; default: icon = androidx.core.content.ContextCompat.getDrawable(this, R.drawable.ic_enter); break; } } else { icon = androidx.core.content.ContextCompat.getDrawable(this, R.drawable.ic_enter); }
+        String lbl = null;
+        android.graphics.drawable.Drawable icon = null;
+        if (!ml && !ne) {
+            switch (action) {
+                case EditorInfo.IME_ACTION_SEARCH:
+                    lbl = "Search";
+                    icon = null;
+                    break;
+                case EditorInfo.IME_ACTION_GO:
+                    lbl = "Go";
+                    icon = null;
+                    break;
+                case EditorInfo.IME_ACTION_SEND:
+                    lbl = "Send";
+                    icon = null;
+                    break;
+                case EditorInfo.IME_ACTION_NEXT:
+                    lbl = "Next";
+                    icon = null;
+                    break;
+                case EditorInfo.IME_ACTION_DONE:
+                    lbl = "Done";
+                    icon = null;
+                    break;
+                case EditorInfo.IME_ACTION_UNSPECIFIED:
+                case EditorInfo.IME_ACTION_NONE:
+                default:
+                    lbl = null;
+                    icon = androidx.core.content.ContextCompat.getDrawable(this, R.drawable.ic_enter);
+                    break;
+            }
+        } else {
+            lbl = null;
+            icon = androidx.core.content.ContextCompat.getDrawable(this, R.drawable.ic_enter);
+        }
         Keyboard[] kbs = {qwertyKeyboard, symbolsKeyboard, symbolsShiftKeyboard, numpadKeyboard};
-        for (Keyboard kb : kbs) { if (kb == null) continue; for (Keyboard.Key k : kb.getKeys()) if (k.codes != null && k.codes.length > 0 && k.codes[0] == CODE_DONE) { k.label = lbl; k.icon = icon; } }
+        for (Keyboard kb : kbs) {
+            if (kb == null) continue;
+            for (Keyboard.Key k : kb.getKeys()) {
+                if (k.codes != null && k.codes.length > 0 && k.codes[0] == CODE_DONE) {
+                    k.label = lbl;
+                    k.icon = icon;
+                }
+            }
+        }
         if (keyboardView != null) keyboardView.invalidateAllKeys();
     }
 
@@ -598,42 +781,32 @@ public class MyKeyboardService extends InputMethodService
         View bth = root.findViewById(R.id.btn_tool_gif);
         View bs  = root.findViewById(R.id.btn_tool_cursor);
         View bm  = root.findViewById(R.id.btn_tool_mic);
-        View clipboard = root.findViewById(R.id.btn_tool_clipboard);
-        View more = root.findViewById(R.id.btn_tool_more);
-        if (clipboard != null) clipboard.setOnClickListener(v -> clipManager.toggleDrawer());
-        if (more != null) more.setOnClickListener(v -> toggleTBCustomizer());
 
         // Grid → toggle clipboard drawer + highlight icon
-        if (bg != null) bg.setOnClickListener(v -> {
-            View tools = root.findViewById(R.id.toolbar_scroll_legacy);
-            tools.setVisibility(tools.getVisibility() == View.VISIBLE ? View.GONE : View.VISIBLE);
+        if (bg  != null) bg.setOnClickListener(v -> {
+            clipManager.toggleDrawer();
+            boolean drawerOpen = (clipboardDrawer != null
+                    && clipboardDrawer.getVisibility() == View.VISIBLE);
+            highlightClipboard(drawerOpen);
         });
 
         // Emoji → toggle emoji panel
         if (be  != null) be.setOnClickListener(v -> {
             if (contentFlipper != null && contentFlipper.getDisplayedChild() == FLIPPER_EMOJI) {
-                switchToQwerty();
+                flipTo(FLIPPER_KB);
             } else {
                 switchToEmoji();
             }
         });
 
         // Translate
-        if (bt  != null) bt.setOnClickListener(v -> { switchToQwerty(); suggManager.handleTranslate(); });
+        if (bt  != null) bt.setOnClickListener(v -> { flipTo(FLIPPER_KB); suggManager.handleTranslate(); });
 
-        // Cursor → launch KeyboardSettingsActivity
-        if (bs  != null) bs.setOnClickListener(v -> {
-            Intent i = new Intent(this, KeyboardSettingsActivity.class);
-            i.setFlags(Intent.FLAG_ACTIVITY_NEW_TASK | Intent.FLAG_ACTIVITY_CLEAR_TOP);
-            startActivity(i);
-        });
+        // Settings (gear icon) → launch KeyboardSettingsActivity
+        if (bs != null) bs.setOnClickListener(v -> launchSettingsActivity());
 
-        // Gif → launch SettingsThemeActivity (deep-link)
-        if (bth != null) bth.setOnClickListener(v -> {
-            Intent i = new Intent(this, SettingsThemeActivity.class);
-            i.setFlags(Intent.FLAG_ACTIVITY_NEW_TASK | Intent.FLAG_ACTIVITY_CLEAR_TOP);
-            startActivity(i);
-        });
+        // Theme button (palette icon) → directly launch KeyboardSettingsActivity as requested
+        if (bth != null) bth.setOnClickListener(v -> launchSettingsActivity());
 
         // Mic → enter/exit voice typing mode
         if (bm  != null) bm.setOnClickListener(v -> voiceManager.handleVoiceTyping());
@@ -641,7 +814,7 @@ public class MyKeyboardService extends InputMethodService
     private void flipTo(int child) {
         if (contentFlipper == null) return;
         if (keyboardView != null && keyboardView.getHeight() > 0) { android.view.ViewGroup.LayoutParams lp = contentFlipper.getLayoutParams(); lp.height = (child != FLIPPER_KB) ? keyboardView.getHeight() : android.view.ViewGroup.LayoutParams.WRAP_CONTENT; contentFlipper.setLayoutParams(lp); }
-        if (child == FLIPPER_KB) { hideAllPanels(); keyboardView.setVisibility(View.VISIBLE); if (emojiFlipperHost != null && emojiPanel != null) { emojiFlipperHost.removeView(emojiPanel); emojiPanel = null; emojiKeyboardView = null; } }
+        if (child == FLIPPER_KB) { keyboardView.setVisibility(View.VISIBLE); if (emojiFlipperHost != null && emojiPanel != null) { emojiFlipperHost.removeView(emojiPanel); emojiPanel = null; emojiKeyboardView = null; } }
         contentFlipper.setDisplayedChild(child); highlightIcon(child);
     }
     /** Highlight the toolbar icon that corresponds to the currently active panel.
@@ -681,27 +854,14 @@ public class MyKeyboardService extends InputMethodService
         String cfg = prefs.getString(PREF_TOOLBAR, "");
         if (!cfg.isEmpty()) { for (String e : cfg.split(",")) { String[] p = e.split(":"); if (p.length == 2) { tbOrder.add(p[0]); if ("1".equals(p[1])) tbVisible.add(p[0]); } } }
         if (tbOrder.isEmpty()) { for (TBDef d : allBtns) { tbOrder.add(d.key); tbVisible.add(d.key); } }
-        if (!tbOrder.contains(PERM_KEY)) tbOrder.add(PERM_KEY);
         tbVisible.add(PERM_KEY);
     }
     private void saveTBConfig() { StringBuilder sb = new StringBuilder(); for (String k : tbOrder) sb.append(k).append(":").append(tbVisible.contains(k) ? "1" : "0").append(","); prefs.edit().putString(PREF_TOOLBAR, sb.toString()).apply(); }
     private void rebuildToolbar() {
         if (toolbarRow == null) return; toolbarRow.removeAllViews();
-        String[] keys = {"clipboard", "translate", "emoji", "settings", "voice"};
-        int[] ids = {R.id.btn_tool_clipboard, R.id.btn_tool_translate, R.id.btn_tool_emoji,
-                R.id.btn_tool_cursor, R.id.btn_tool_mic};
-        for (int i = 0; i < keys.length; i++) {
-            View button = keyboardRoot.findViewById(ids[i]);
-            if (button != null) button.setVisibility(tbVisible.contains(keys[i]) ? View.VISIBLE : View.GONE);
-        }
-        for (String key : tbOrder) { if (!tbVisible.contains(key)) continue; TBDef def = findDef(key); if (def == null) continue; TextView btn = new TextView(this); btn.setText(def.icon); btn.setContentDescription(def.label); btn.setMinWidth(dpToPx(48)); btn.setMinHeight(dpToPx(48)); btn.setOnLongClickListener(v -> { enterResize(); return true; }); btn.setTextSize(22f); btn.setGravity(android.view.Gravity.CENTER); btn.setPadding(dpToPx(10), dpToPx(6), dpToPx(10), dpToPx(6)); btn.setTextColor(androidx.core.content.ContextCompat.getColor(this, R.color.toolbar_icon_inactive)); LinearLayout.LayoutParams lp = new LinearLayout.LayoutParams(LinearLayout.LayoutParams.WRAP_CONTENT, LinearLayout.LayoutParams.WRAP_CONTENT); lp.setMargins(2, 0, 2, 0); btn.setLayoutParams(lp); final String k = key; btn.setOnClickListener(v -> handleTBClick(k)); toolbarRow.addView(btn); }
+        for (String key : tbOrder) { if (!tbVisible.contains(key)) continue; TBDef def = findDef(key); if (def == null) continue; TextView btn = new TextView(this); btn.setText(def.icon); btn.setTextSize(26f); btn.setGravity(android.view.Gravity.CENTER); btn.setPadding(dpToPx(12), dpToPx(8), dpToPx(12), dpToPx(8)); btn.setTextColor(androidx.core.content.ContextCompat.getColor(this, R.color.toolbar_icon_inactive)); LinearLayout.LayoutParams lp = new LinearLayout.LayoutParams(LinearLayout.LayoutParams.WRAP_CONTENT, LinearLayout.LayoutParams.WRAP_CONTENT); lp.setMargins(4, 0, 4, 0); btn.setLayoutParams(lp); final String k = key; btn.setOnClickListener(v -> handleTBClick(k)); toolbarRow.addView(btn); }
     }
-    private void toggleTBCustomizer() {
-        toggleMiscPanel(toolbarCustomizerPanel, () -> {
-            toolbarCustomizerPanel.setVisibility(View.VISIBLE);
-            refreshTBCustomizer();
-        });
-    }
+    private void toggleTBCustomizer() { if (toolbarCustomizerPanel == null) return; boolean v = toolbarCustomizerPanel.getVisibility() == View.VISIBLE; toolbarCustomizerPanel.setVisibility(v ? View.GONE : View.VISIBLE); if (!v) refreshTBCustomizer(); }
     private void refreshTBCustomizer() {
         if (toolbarCustomizerList == null) return; toolbarCustomizerList.removeAllViews();
         for (String key : tbOrder) { if (PERM_KEY.equals(key)) continue; TBDef def = findDef(key); if (def == null) continue; android.widget.CheckBox cb = new android.widget.CheckBox(this); cb.setText(def.icon + " " + def.label); cb.setChecked(tbVisible.contains(key)); cb.setTextColor(themeManager.isDark() ? Color.WHITE : androidx.core.content.ContextCompat.getColor(this, R.color.key_text_color)); cb.setOnCheckedChangeListener((b, ch) -> { if (ch) tbVisible.add(key); else tbVisible.remove(key); saveTBConfig(); rebuildToolbar(); }); toolbarCustomizerList.addView(cb); }
@@ -714,20 +874,20 @@ public class MyKeyboardService extends InputMethodService
         View ts = root.findViewById(R.id.toolbar_strip); if (ts != null) ts.setOnLongClickListener(v -> { enterResize(); return true; });
         if (resizeDragHandle != null) resizeDragHandle.setOnTouchListener((v, ev) -> {
             switch (ev.getAction()) {
-                case android.view.MotionEvent.ACTION_DOWN: resizeDragStartY = ev.getRawY(); resizeDragStartH = keyboardView != null ? keyboardView.getHeight() : dpToPx(240); return true;
-                case android.view.MotionEvent.ACTION_MOVE: float d = resizeDragStartY - ev.getRawY(); int nh = Math.max(dpToPx(180), Math.min(dpToPx(420), resizeDragStartH + (int) d)); setKbH(Math.round(nh / getResources().getDisplayMetrics().density)); return true;
+                case android.view.MotionEvent.ACTION_DOWN: resizeDragStartY = ev.getRawY(); resizeDragStartH = keyboardRoot != null ? keyboardRoot.getHeight() : dpToPx(DEFAULT_DP); return true;
+                case android.view.MotionEvent.ACTION_MOVE: float d = resizeDragStartY - ev.getRawY(); int nh = Math.max(dpToPx(180), Math.min(dpToPx(420), resizeDragStartH + (int) d)); setKbH(nh / (int) getResources().getDisplayMetrics().density); return true;
             }
             return false;
         });
         View br = root.findViewById(R.id.btn_resize_reset); if (br != null) br.setOnClickListener(v -> { setKbH(DEFAULT_DP); prefs.edit().putInt(PREF_KB_H, DEFAULT_DP).apply(); });
-        View bd = root.findViewById(R.id.btn_resize_done); if (bd != null) bd.setOnClickListener(v -> { int dp = keyboardView != null ? Math.round(keyboardView.getHeight() / getResources().getDisplayMetrics().density) : DEFAULT_DP; prefs.edit().putInt(PREF_KB_H, dp).apply(); exitResize(); });
+        View bd = root.findViewById(R.id.btn_resize_done); if (bd != null) bd.setOnClickListener(v -> { int dp = keyboardRoot != null ? (int)(keyboardRoot.getHeight() / getResources().getDisplayMetrics().density) : DEFAULT_DP; prefs.edit().putInt(PREF_KB_H, dp).apply(); exitResize(); });
     }
-    private void enterResize() { switchToQwerty(); resizeModeActive = true; if (resizeOverlay != null) resizeOverlay.setVisibility(View.VISIBLE); }
+    private void enterResize() { resizeModeActive = true;  if (resizeOverlay != null) resizeOverlay.setVisibility(View.VISIBLE); }
     private void exitResize()  { resizeModeActive = false; if (resizeOverlay != null) resizeOverlay.setVisibility(View.GONE); }
     private void setKbH(int dp) {
-        if (keyboardView == null) return;
-        int height = dp > 0 ? dpToPx(Math.max(180, Math.min(420, dp))) : 0;
-        keyboardView.setKeyboardHeight(height);
+        if (keyboardRoot == null) return; int px = dp > 0 ? dpToPx(dp) : 0;
+        keyboardRoot.setMinimumHeight(px);
+        if (keyboardView != null) { android.view.ViewGroup.LayoutParams lp = keyboardView.getLayoutParams(); if (lp != null) keyboardView.setLayoutParams(lp); }
         keyboardRoot.requestLayout();
     }
     private int dpToPx(int dp) { return (int)(dp * getResources().getDisplayMetrics().density); }

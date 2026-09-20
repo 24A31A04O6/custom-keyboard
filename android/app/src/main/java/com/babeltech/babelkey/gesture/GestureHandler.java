@@ -129,7 +129,10 @@ public class GestureHandler {
             android.inputmethodservice.Keyboard.Key pk = getKeyAt(x, y);
             int code = (pk != null && pk.codes != null && pk.codes.length > 0) ? pk.codes[0] : 0;
 
-            switch (ev.getAction()) {
+            int action = ev.getActionMasked();
+            int actionIndex = ev.getActionIndex();
+
+            switch (action) {
                 case MotionEvent.ACTION_DOWN:
                     if (code == 32) {
                         // ── Spacebar down ────────────────────────────────────
@@ -148,6 +151,24 @@ public class GestureHandler {
                         isSwiping = false; swipePath.clear(); swipePts.clear();
                         swipePath.add((char) code); swipePts.add(new float[]{x, y});
                         swipeLastX = x; swipeLastY = y;
+                    }
+                    break;
+
+                case MotionEvent.ACTION_POINTER_DOWN:
+                    // A secondary finger touched down while another is active.
+                    // Check if this specific pointer is on spacebar or backspace
+                    float px = ev.getX(actionIndex);
+                    float py = ev.getY(actionIndex);
+                    android.inputmethodservice.Keyboard.Key pointerKey = getKeyAt(px, py);
+                    int pointerCode = (pointerKey != null && pointerKey.codes != null && pointerKey.codes.length > 0) ? pointerKey.codes[0] : 0;
+                    if (pointerCode == 32) {
+                        spaceStartX = px;
+                        spaceAccum  = 0;
+                        isSpaceSwiping = false;
+                        scheduleTrackpad(px, py);
+                    } else if (pointerCode == -5) {
+                        bsDown = true; bsStartX = px; bsStartY = py;
+                        bsGestureUsed = false; bsWordsDeleted = 0;
                     }
                     break;
 
@@ -215,6 +236,20 @@ public class GestureHandler {
                                 isSwiping = true; swipeLastX = x; swipeLastY = y;
                             }
                         }
+                    }
+                    break;
+
+                case MotionEvent.ACTION_POINTER_UP:
+                    int upIndex = ev.getActionIndex();
+                    float upX = ev.getX(upIndex);
+                    float upY = ev.getY(upIndex);
+                    android.inputmethodservice.Keyboard.Key upKey = getKeyAt(upX, upY);
+                    int upCode = (upKey != null && upKey.codes != null && upKey.codes.length > 0) ? upKey.codes[0] : 0;
+                    if (upCode == 32) {
+                        cancelTrackpad();
+                        if (isSpaceSwiping) { isSpaceSwiping = false; spaceAccum = 0; return true; }
+                    } else if (upCode == -5) {
+                        if (bsDown) { bsDown = false; if (bsGestureUsed) return true; }
                     }
                     break;
 
@@ -390,5 +425,19 @@ public class GestureHandler {
 
     private int dpToPx(int dp) { return (int)(dp*ctx.getResources().getDisplayMetrics().density); }
     public void detach() { kv=null;trackpadOverlay=null;previewPopup=null;previewText=null; }
-    public void destroy() { cancelTrackpad();handler.removeCallbacksAndMessages(null); }
+    public void reset() {
+        cancelTrackpad();
+        exitTrackpad();
+        hidePreview();
+        isSwiping = false;
+        isSpaceSwiping = false;
+        spaceAccum = 0;
+        bsDown = false;
+        bsGestureUsed = false;
+        bsWordsDeleted = 0;
+        swipePath.clear();
+        swipePts.clear();
+        handler.removeCallbacksAndMessages(null);
+    }
+    public void destroy() { reset(); detach(); }
 }

@@ -1,11 +1,11 @@
 package com.babeltech.babelkey.settings;
 
-import android.app.AlertDialog;
 import android.content.Intent;
 import android.content.SharedPreferences;
 import android.content.pm.PackageManager;
 import android.net.Uri;
 import android.os.Bundle;
+import android.util.Log;
 import android.view.MenuItem;
 import android.widget.EditText;
 import android.widget.LinearLayout;
@@ -15,10 +15,13 @@ import android.widget.TextView;
 import android.widget.Toast;
 
 import androidx.annotation.Nullable;
+import androidx.appcompat.app.AlertDialog;
 import androidx.appcompat.app.AppCompatActivity;
+import androidx.appcompat.widget.SwitchCompat;
 import androidx.appcompat.widget.Toolbar;
 
 import com.babeltech.babelkey.R;
+import com.babeltech.babelkey.core.CrashLogger;
 import com.babeltech.babelkey.theme.PickImageActivity;
 import com.babeltech.babelkey.theme.SettingsThemeActivity;
 
@@ -42,101 +45,138 @@ public class KeyboardSettingsActivity extends AppCompatActivity {
     @Override
     protected void onCreate(@Nullable Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
-        setContentView(R.layout.activity_keyboard_settings);
+        try {
+            setContentView(R.layout.activity_keyboard_settings);
+            prefs = getSharedPreferences(PREFS, MODE_PRIVATE);
 
-        prefs = getSharedPreferences(PREFS, MODE_PRIVATE);
-
-        // ── ActionBar ─────────────────────────────────────────────────────
-        Toolbar toolbar = findViewById(R.id.toolbar);
-        setSupportActionBar(toolbar);
-        if (getSupportActionBar() != null) {
-            getSupportActionBar().setTitle("Settings");
-            getSupportActionBar().setDisplayHomeAsUpEnabled(true);
-        }
-
-        // ── Refresh dynamic subtitle labels ───────────────────────────────
-        refreshDynamicLabels();
-
-        // ── Row click listeners ───────────────────────────────────────────
-
-        // Languages — dialog to select active input language
-        safeClick(R.id.row_languages, this::showLanguageDialog);
-
-        // Preferences → Corrections sub-screen
-        safeClick(R.id.row_preferences, () -> startSubScreen(SettingsCorrectionsActivity.class));
-
-        // Theme → Theme picker sub-screen
-        safeClick(R.id.row_theme, () -> startSubScreen(SettingsThemeActivity.class));
-
-        // Corrections and suggestions  same sub-screen
-        safeClick(R.id.row_corrections, () -> startSubScreen(SettingsCorrectionsActivity.class));
-
-        // Glide typing toggle
-        safeClick(R.id.row_glide, () -> {
-            boolean current = prefs.getBoolean("swipeTypingEnabled", false);
-            prefs.edit().putBoolean("swipeTypingEnabled", !current).apply();
-            Toast.makeText(this,
-                    "Swipe / Glide typing " + (!current ? "ON" : "OFF"),
-                    Toast.LENGTH_SHORT).show();
-            refreshDynamicLabels();
-        });
-
-        // Voice typing  toggle the mic button visibility
-        safeClick(R.id.row_voice, this::showVoiceTypingDialog);
-
-        // Clipboard
-        safeClick(R.id.row_clipboard, () ->
-            Toast.makeText(this,
-                "Clipboard history is available in the keyboard toolbar.",
-                Toast.LENGTH_LONG).show());
-
-        // Dictionary — personal word list editor
-        safeClick(R.id.row_dictionary, this::showDictionaryDialog);
-
-        // Emoji — toggle emoji prediction
-        safeClick(R.id.row_emoji, this::showEmojiSettingsDialog);
-
-        // Custom background  PickImageActivity
-        safeClick(R.id.row_custom_bg, () -> {
-            boolean enabled = prefs.getBoolean("customBgEnabled", false);
-            if (!enabled) {
-                prefs.edit().putBoolean("customBgEnabled", true).apply();
-                startActivity(new Intent(this, PickImageActivity.class));
-            } else {
-                prefs.edit().putBoolean("customBgEnabled", false)
-                     .remove("customBackgroundUri").apply();
-                java.io.File local = new java.io.File(getFilesDir(), "custom_bg.jpg");
-                if (local.exists()) local.delete();
-                Toast.makeText(this, "Custom background disabled", Toast.LENGTH_SHORT).show();
+            // ── ActionBar ─────────────────────────────────────────────────────
+            Toolbar toolbar = findViewById(R.id.toolbar);
+            if (toolbar != null) {
+                setSupportActionBar(toolbar);
+                if (getSupportActionBar() != null) {
+                    getSupportActionBar().setTitle("Settings");
+                    getSupportActionBar().setDisplayHomeAsUpEnabled(true);
+                }
             }
+
+            // ── Custom background toggle switch ───────────────────────────────
+            SwitchCompat swCustomBg = findViewById(R.id.switch_custom_bg);
+            if (swCustomBg != null) {
+                swCustomBg.setChecked(prefs.getBoolean("customBgEnabled", false));
+                swCustomBg.setOnCheckedChangeListener((btn, isChecked) -> {
+                    prefs.edit().putBoolean("customBgEnabled", isChecked).apply();
+                    if (isChecked) {
+                        try {
+                            startActivity(new Intent(this, PickImageActivity.class));
+                        } catch (Exception ex) {
+                            Toast.makeText(this, "Could not open image picker", Toast.LENGTH_SHORT).show();
+                        }
+                    } else {
+                        prefs.edit().remove("customBackgroundUri").apply();
+                        java.io.File local = new java.io.File(getFilesDir(), "custom_bg.jpg");
+                        if (local.exists()) local.delete();
+                        Toast.makeText(this, "Custom background disabled", Toast.LENGTH_SHORT).show();
+                    }
+                    refreshDynamicLabels();
+                });
+            }
+
+            safeClick(R.id.row_custom_bg_toggle, () -> {
+                SwitchCompat sw = findViewById(R.id.switch_custom_bg);
+                if (sw != null) sw.toggle();
+            });
+
+            // ── Refresh dynamic subtitle labels ───────────────────────────────
             refreshDynamicLabels();
-        });
 
-        // Resize keyboard hint
-        safeClick(R.id.row_resize, () ->
-            Toast.makeText(this,
-                "Long-press the toolbar strip above the keyboard to enter resize mode.",
-                Toast.LENGTH_LONG).show());
+            // ── Row click listeners ───────────────────────────────────────────
 
-        // Privacy policy
-        safeClick(R.id.row_privacy, () ->
-            new AlertDialog.Builder(this)
-                .setTitle("Privacy Policy")
-                .setMessage("BabelKey processes all text locally on your device.\n\n" +
-                    "We do not collect, transmit, or store any keystrokes, typed words, " +
-                    "or personal data on external servers. Voice typing uses the Android " +
-                    "system speech recognizer only when you explicitly tap the mic button.")
-                .setPositiveButton("OK", null)
-                .show());
+            // Languages — dialog to select active input language
+            safeClick(R.id.row_languages, this::showLanguageDialog);
 
-        // Rate us → Google Play Store
-        safeClick(R.id.row_rate, this::openPlayStore);
+            // Preferences → Corrections sub-screen
+            safeClick(R.id.row_preferences, () -> startSubScreen(SettingsCorrectionsActivity.class));
 
-        // About
-        safeClick(R.id.row_about, this::showAboutDialog);
+            // Theme → Theme picker sub-screen
+            safeClick(R.id.row_theme, () -> startSubScreen(SettingsThemeActivity.class));
 
-        // Help & Support → email intent
-        safeClick(R.id.row_help, this::showHelpDialog);
+            // Corrections and suggestions — same sub-screen
+            safeClick(R.id.row_corrections, () -> startSubScreen(SettingsCorrectionsActivity.class));
+
+            // Glide typing toggle
+            safeClick(R.id.row_glide, () -> {
+                boolean current = prefs.getBoolean("swipeTypingEnabled", false);
+                prefs.edit().putBoolean("swipeTypingEnabled", !current).apply();
+                Toast.makeText(this,
+                        "Swipe / Glide typing " + (!current ? "ON" : "OFF"),
+                        Toast.LENGTH_SHORT).show();
+                refreshDynamicLabels();
+            });
+
+            // Voice typing — toggle the mic button visibility
+            safeClick(R.id.row_voice, this::showVoiceTypingDialog);
+
+            // Clipboard
+            safeClick(R.id.row_clipboard, () ->
+                Toast.makeText(this,
+                    "Clipboard history is available in the keyboard toolbar.",
+                    Toast.LENGTH_LONG).show());
+
+            // Dictionary — personal word list editor
+            safeClick(R.id.row_dictionary, this::showDictionaryDialog);
+
+            // Emoji — toggle emoji prediction
+            safeClick(R.id.row_emoji, this::showEmojiSettingsDialog);
+
+            // Custom background — PickImageActivity
+            safeClick(R.id.row_custom_bg, () -> {
+                boolean enabled = prefs.getBoolean("customBgEnabled", false);
+                if (!enabled) {
+                    prefs.edit().putBoolean("customBgEnabled", true).apply();
+                    try {
+                        startActivity(new Intent(this, PickImageActivity.class));
+                    } catch (Exception ex) {
+                        Toast.makeText(this, "Could not open image picker", Toast.LENGTH_SHORT).show();
+                    }
+                } else {
+                    prefs.edit().putBoolean("customBgEnabled", false)
+                         .remove("customBackgroundUri").apply();
+                    java.io.File local = new java.io.File(getFilesDir(), "custom_bg.jpg");
+                    if (local.exists()) local.delete();
+                    Toast.makeText(this, "Custom background disabled", Toast.LENGTH_SHORT).show();
+                }
+                refreshDynamicLabels();
+            });
+
+            // Resize keyboard hint
+            safeClick(R.id.row_resize, () ->
+                Toast.makeText(this,
+                    "Long-press the toolbar strip above the keyboard to enter resize mode.",
+                    Toast.LENGTH_LONG).show());
+
+            // Privacy policy
+            safeClick(R.id.row_privacy, () ->
+                new AlertDialog.Builder(this)
+                    .setTitle("Privacy Policy")
+                    .setMessage("BabelKey processes all text locally on your device.\n\n" +
+                        "We do not collect, transmit, or store any keystrokes, typed words, " +
+                        "or personal data on external servers. Voice typing uses the Android " +
+                        "system speech recognizer only when you explicitly tap the mic button.")
+                    .setPositiveButton("OK", null)
+                    .show());
+
+            // Rate us → Google Play Store
+            safeClick(R.id.row_rate, this::openPlayStore);
+
+            // About
+            safeClick(R.id.row_about, this::showAboutDialog);
+
+            // Help & Support → email intent
+            safeClick(R.id.row_help, this::showHelpDialog);
+        } catch (Throwable t) {
+            Log.e("KeyboardSettingsActivity", "Error initializing settings activity", t);
+            CrashLogger.logError("KeyboardSettingsActivity", "onCreate", t.getMessage(), t);
+        }
     }
 
     // ── Dialog implementations ────────────────────────────────────────────
@@ -323,18 +363,28 @@ public class KeyboardSettingsActivity extends AppCompatActivity {
 
     /** Refresh labels that change based on current prefs (e.g. custom BG status). */
     private void refreshDynamicLabels() {
+        if (prefs == null) return;
+        boolean bgEnabled = prefs.getBoolean("customBgEnabled", false);
         TextView tvBgStatus = findViewById(R.id.tv_custom_bg_status);
         if (tvBgStatus != null) {
-            boolean bgEnabled = prefs.getBoolean("customBgEnabled", false);
             tvBgStatus.setText(bgEnabled
-                ? "Enabled  tap to disable"
-                : "Disabled  tap to pick photo");
+                ? "Enabled — tap to disable"
+                : "Disabled — tap to pick photo");
+        }
+        SwitchCompat swCustomBg = findViewById(R.id.switch_custom_bg);
+        if (swCustomBg != null && swCustomBg.isChecked() != bgEnabled) {
+            swCustomBg.setChecked(bgEnabled);
         }
     }
 
     /** Starts a sub-screen Activity. */
     private void startSubScreen(Class<?> activityClass) {
-        startActivity(new Intent(this, activityClass));
+        try {
+            startActivity(new Intent(this, activityClass));
+        } catch (Exception ex) {
+            Log.e("KeyboardSettings", "Failed to start " + activityClass.getSimpleName(), ex);
+            Toast.makeText(this, "Could not open sub-settings screen", Toast.LENGTH_SHORT).show();
+        }
     }
 
     /** Null-safe click listener setter. */

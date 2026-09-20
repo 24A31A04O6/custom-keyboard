@@ -1,0 +1,6 @@
+{
+  "name": "BabelKey Keyboard",
+  "description": "Smart multilingual custom keyboard with Telugu transliteration, autocorrect, voice typing, clipboard manager, emoji search, themes, and sound effects.",
+  "requestFramePermissions": ["microphone"],
+  "majorCapabilities": ["MAJOR_CAPABILITY_SERVER_SIDE_GEMINI_API"]
+}

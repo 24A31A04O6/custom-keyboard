@@ -14,6 +14,7 @@ import android.widget.ScrollView;
 import android.widget.TextView;
 import android.widget.Toast;
 import com.babeltech.babelkey.R;
+import com.babeltech.babelkey.core.MyKeyboardService;
 import com.babeltech.babelkey.core.ServiceCallback;
 import com.babeltech.babelkey.translate.TranslationService;
 import org.json.JSONException;
@@ -45,6 +46,7 @@ public class SuggestionManager implements SuggestionView.SuggestionClickListener
 
     public final Map<String, List<String>> DICT        = new HashMap<>();
     public final Map<String, List<String>> TEL_ENG_DICT = new HashMap<>();
+    public final Map<String, List<String>> TELUGU_DICT = new HashMap<>();
     public final Map<String, String> TRANSLATE_DICT         = new HashMap<>();
     public final Map<String, String> TRANSLATE_REVERSE_DICT = new HashMap<>();
     public final List<String> TRANSLATE_EN_PHRASES          = new ArrayList<>();
@@ -98,6 +100,7 @@ public class SuggestionManager implements SuggestionView.SuggestionClickListener
         loadKVDict(R.raw.emoji_suggestions,EMOJI_SUGGESTIONS,"EMOJI");
         loadPrefixDict(R.raw.suggestions_dict,DICT,"DICT");
         loadPrefixDict(R.raw.tel_eng_dict,TEL_ENG_DICT,"TEL_ENG");
+        loadPrefixDict(R.raw.telugu_dict,TELUGU_DICT,"TELUGU");
         learnedWords=new HashSet<>(prefs.getStringSet(PREF_LEARNED,new HashSet<>()));
         personalDict=new HashSet<>(prefs.getStringSet(PREF_PERSONAL,new HashSet<>()));
         loadShortcuts(); loadPhrases(); loadStats();
@@ -135,6 +138,13 @@ public class SuggestionManager implements SuggestionView.SuggestionClickListener
     }
 
     // Suggestions
+    /** Refresh suggestions for an explicit current-word snapshot (hardware-keyboard path). */
+    public void updateSuggestions(String word) {
+        currentWord.setLength(0);
+        if (word != null) currentWord.append(word);
+        updateSuggestions();
+    }
+
     public void updateSuggestions() {
         if(sugView==null) return;
         if(!isAlphabeticLayer) { sugView.clear(); return; }

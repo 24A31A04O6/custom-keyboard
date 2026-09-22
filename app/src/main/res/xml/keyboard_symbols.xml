@@ -17,7 +17,7 @@
         <Key android:codes="48" android:keyLabel="0" android:keyEdgeFlags="right"/>
     </Row>
         <Row>
-        <Key android:codes="64" android:keyLabel="@" android:horizontalGap="5%p" android:keyEdgeFlags="left"/>
+        <Key android:codes="64" android:keyLabel="@" android:keyEdgeFlags="left"/>
         <Key android:codes="35" android:keyLabel="#" />
         <Key android:codes="8377" android:keyLabel="&#8377;" />
         <Key android:codes="95" android:keyLabel="_" />

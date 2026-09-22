@@ -175,9 +175,7 @@ public class GestureHandler {
                 case MotionEvent.ACTION_MOVE:
                     // ── Forward to Symbol Popup if showing ──────────────────
                     if (symbolPopup != null && symbolPopup.isShowing()) {
-                        int[] loc = new int[2];
-                        v.getLocationInWindow(loc);
-                        symbolPopup.onTouchMove(ev.getRawX(), loc[0]);
+                        symbolPopup.onTouchMove(ev.getRawX(), symbolPopup.getPopupX(v));
                         return false;
                     }
 
@@ -345,7 +343,7 @@ public class GestureHandler {
 
     // Gboard preview
     public void showPreview(int code) {
-        if(previewPopup==null||kv==null||currentMode==3) return;
+        if(previewPopup==null||kv==null||previewText==null||currentMode==3) return;
         if(code<0||code==32||code==10||code==127) return;
         android.inputmethodservice.Keyboard kb=kv.getKeyboard();if(kb==null)return;
         android.inputmethodservice.Keyboard.Key mk=null;

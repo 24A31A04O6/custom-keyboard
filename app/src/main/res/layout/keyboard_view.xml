@@ -1,24 +1,24 @@
 <?xml version="1.0" encoding="utf-8"?>
 <!--
-    keyboard_view.xml â€” Root layout returned by onCreateInputView().
+    keyboard_view.xml — Root layout returned by onCreateInputView().
 
     Structure:
-    â”Œâ”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”
-    â”‚  keyboard_root (LinearLayout, vertical)                 â”‚
-    â”‚  â”Œâ”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”  â”‚
-    â”‚  â”‚  toolbar_strip (7 fixed icons, always visible)    â”‚  â”‚
-    â”‚  â”œâ”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”¤  â”‚
-    â”‚  â”‚  banners / voice panel / OTP / grammar (GONE)     â”‚  â”‚
-    â”‚  â”œâ”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”¤  â”‚
-    â”‚  â”‚  suggestion_scroll                                â”‚  â”‚
-    â”‚  â”œâ”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”¤  â”‚
-    â”‚  â”‚  content_flipper (ViewFlipper)                    â”‚  â”‚
-    â”‚  â”‚  â”Œâ”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”  child 0 = keyboard_view    â”‚  â”‚
-    â”‚  â”‚  â”‚  child 1 = emoji â”‚  child 2 = gif placeholder  â”‚  â”‚
-    â”‚  â”‚  â”‚  child 3 = theme â”‚  child 4 = settings panel   â”‚  â”‚
-    â”‚  â”‚  â””â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”˜                              â”‚  â”‚
-    â”‚  â””â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”˜  â”‚
-    â””â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”˜
+    ┌─────────────────────────────────────────────────────────┐
+    │  keyboard_root (LinearLayout, vertical)                 │
+    │  ┌───────────────────────────────────────────────────┐  │
+    │  │  toolbar_strip (7 fixed icons, always visible)    │  │
+    │  ├───────────────────────────────────────────────────┤  │
+    │  │  banners / voice panel / OTP / grammar (GONE)     │  │
+    │  ├───────────────────────────────────────────────────┤  │
+    │  │  suggestion_scroll                                │  │
+    │  ├───────────────────────────────────────────────────┤  │
+    │  │  content_flipper (ViewFlipper)                    │  │
+    │  │  ┌─────────────────┐  child 0 = keyboard_view    │  │
+    │  │  │  child 1 = emoji │  child 2 = gif placeholder  │  │
+    │  │  │  child 3 = theme │  child 4 = settings panel   │  │
+    │  │  └─────────────────┘                              │  │
+    │  └───────────────────────────────────────────────────┘  │
+    └─────────────────────────────────────────────────────────┘
     The trackpad overlay sits in the outer FrameLayout on top of everything.
 -->
 <FrameLayout
@@ -27,7 +27,7 @@
     android:layout_height="wrap_content"
     android:paddingBottom="0dp">
 
-    <!-- â•â• MAIN KEYBOARD ROOT â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â• -->
+    <!-- ══ MAIN KEYBOARD ROOT ═══════════════════════════════════════════════════ -->
     <LinearLayout
         android:id="@+id/keyboard_root"
         android:layout_width="match_parent"
@@ -36,12 +36,14 @@
         android:paddingBottom="0dp"
         android:background="@color/toolbar_background">
 
-        <!-- â”€â”€ TOOLBAR STRIP â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€ -->
+        <!-- ── TOOLBAR STRIP ────────────────────────────────────────────────── -->
         <!--
-            Fixed 7-icon strip. Each icon is a TextView (emoji glyph) so we
-            don't need vector drawable resources. The service wires click listeners.
-            IDs: btn_tool_*, see MyKeyboardService.rebuildToolbar() still handles
-            the old scrollable toolbar_row â€” this strip is NEW and separate.
+            Gboard-style configurable toolbar strip. The visible buttons are
+            injected at runtime into toolbar_strip_dynamic by
+            MyKeyboardService.rebuildToolbar() from the saved
+            toolbarButtonConfig (toolbar_button_config pref). The trailing
+            "More" button (btn_customize_toolbar) opens the toolbar editor;
+            long-pressing any toolbar button opens it as well.
         -->
         <LinearLayout
             android:id="@+id/toolbar_strip"
@@ -53,117 +55,36 @@
             android:paddingStart="4dp"
             android:paddingEnd="4dp">
 
-            <!-- Grid / Menu -->
-            <ImageView
-                android:id="@+id/btn_tool_grid"
+            <!-- Gboard-style configurable toolbar: buttons are injected here at
+                 runtime by MyKeyboardService.rebuildToolbar() according to the
+                 user's saved toolbar config (toolbarButtonConfig). -->
+            <LinearLayout
+                android:id="@+id/toolbar_strip_dynamic"
                 android:layout_width="0dp"
                 android:layout_height="48dp"
                 android:layout_weight="1"
-                android:contentDescription="Menu"
+                android:contentDescription="Toolbar"
+                android:orientation="horizontal"
+                android:gravity="center_vertical"/>
+
+            <!-- "More" button: opens the Gboard-style toolbar editor. -->
+            <ImageView
+                android:id="@+id/btn_customize_toolbar"
+                android:layout_width="44dp"
+                android:layout_height="48dp"
+                android:contentDescription="Customize toolbar"
                 android:src="@drawable/ic_tool_grid"
                 android:scaleType="centerInside"
                 android:tint="@color/toolbar_icon_inactive"
                 android:background="?android:attr/selectableItemBackgroundBorderless"
-                android:padding="5dp"/>
-
-            <!-- Emoji -->
-            <ImageView
-                android:id="@+id/btn_tool_emoji"
-                android:layout_width="0dp"
-                android:layout_height="48dp"
-                android:layout_weight="1"
-                android:contentDescription="Emoji"
-                android:src="@drawable/ic_sticker"
-                android:scaleType="centerInside"
-                android:tint="@color/toolbar_icon_inactive"
-                android:background="?android:attr/selectableItemBackgroundBorderless"
-                android:padding="5dp"/>
-
-            <!-- Settings (Gear) -->
-            <ImageView
-                android:id="@+id/btn_tool_cursor"
-                android:layout_width="0dp"
-                android:layout_height="48dp"
-                android:layout_weight="1"
-                android:contentDescription="Settings"
-                android:src="@drawable/ic_tool_settings" 
-                android:scaleType="centerInside"
-                android:tint="@color/toolbar_icon_inactive"
-                android:background="?android:attr/selectableItemBackgroundBorderless"
-                android:padding="5dp"/>
-
-            <!-- Theme (Palette) -->
-            <ImageView
-                android:id="@+id/btn_tool_gif"
-                android:layout_width="0dp"
-                android:layout_height="48dp"
-                android:layout_weight="1"
-                android:contentDescription="Theme"
-                android:src="@drawable/ic_tool_palette" 
-                android:scaleType="centerInside"
-                android:tint="@color/toolbar_icon_inactive"
-                android:background="?android:attr/selectableItemBackgroundBorderless"
-                android:padding="5dp"/>
-
-            <!-- Clipboard -->
-            <ImageView
-                android:id="@+id/btn_tool_clipboard"
-                android:layout_width="0dp"
-                android:layout_height="48dp"
-                android:layout_weight="1"
-                android:contentDescription="Clipboard"
-                android:src="@drawable/ic_clipboard" 
-                android:scaleType="centerInside"
-                android:tint="@color/toolbar_icon_inactive"
-                android:background="?android:attr/selectableItemBackgroundBorderless"
-                android:padding="5dp"/>
-
-            <!-- Translate -->
-            <ImageView
-                android:id="@+id/btn_tool_translate"
-                android:layout_width="0dp"
-                android:layout_height="48dp"
-                android:layout_weight="1"
-                android:contentDescription="Translate"
-                android:src="@drawable/ic_tool_translate"
-                android:scaleType="centerInside"
-                android:tint="@color/toolbar_icon_inactive"
-                android:background="?android:attr/selectableItemBackgroundBorderless"
-                android:padding="5dp"/>
-
-            <!-- Mic -->
-            <ImageView
-                android:id="@+id/btn_tool_mic"
-                android:layout_width="0dp"
-                android:layout_height="48dp"
-                android:layout_weight="1"
-                android:contentDescription="Voice Typing"
-                android:src="@drawable/ic_tool_mic"
-                android:scaleType="centerInside"
-                android:tint="@color/toolbar_icon_inactive"
-                android:background="?android:attr/selectableItemBackgroundBorderless"
-                android:padding="5dp"/>
-                
-            <!-- Second Grid / More Icons indicator -->
-            <ImageView
-                android:id="@+id/btn_tool_more"
-                android:layout_width="0dp"
-                android:layout_height="48dp"
-                android:layout_weight="1"
-                android:contentDescription="More"
-                android:src="@drawable/ic_tool_grid"
-                android:scaleType="centerInside"
-                android:tint="@color/toolbar_icon_inactive"
-                android:background="?android:attr/selectableItemBackgroundBorderless"
-                android:padding="5dp"/>
-
+                android:padding="6dp"/>
         </LinearLayout>
-        <!-- End toolbar_strip -->
+<!-- End toolbar_strip -->
 
 
 
 
-        <!-- â”€â”€ Legacy scrollable toolbar_row (kept for backward compat) â”€â”€â”€â”€â”€â”€â”€â”€ -->
+        <!-- ── Legacy scrollable toolbar_row (kept for backward compat) ──────── -->
         <HorizontalScrollView
             android:id="@+id/toolbar_scroll_legacy"
             android:layout_width="match_parent"
@@ -178,7 +99,7 @@
                 android:gravity="center_vertical"/>
         </HorizontalScrollView>
 
-        <!-- â”€â”€ OTP BANNER â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€ -->
+        <!-- ── OTP BANNER ───────────────────────────────────────────────────── -->
         <LinearLayout
             android:id="@+id/otp_banner"
             android:layout_width="match_parent"
@@ -195,7 +116,7 @@
                 android:layout_width="0dp"
                 android:layout_height="wrap_content"
                 android:layout_weight="1"
-                android:text="OTP: 123456 â€” Tap to paste"
+                android:text="OTP: 123456 — Tap to paste"
                 android:textSize="13sp"
                 android:textColor="#856404"
                 android:textStyle="bold"/>
@@ -307,7 +228,7 @@
                 android:id="@+id/btn_grammar_dismiss"
                 android:layout_width="wrap_content"
                 android:layout_height="28dp"
-                android:text="âœ•"
+                android:text="✕"
                 android:textSize="11sp"
                 android:textColor="#0056A0"
                 android:background="@android:color/transparent"
@@ -316,7 +237,7 @@
 
         </LinearLayout>
 
-        <!-- â”€â”€ SUGGESTION BAR â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€ -->
+        <!-- ── SUGGESTION BAR ───────────────────────────────────────────────── -->
         <HorizontalScrollView
             android:id="@+id/suggestion_scroll"
             android:layout_width="match_parent"
@@ -336,14 +257,158 @@
 
         </HorizontalScrollView>
 
-        <!-- â•â• CONTENT FLIPPER â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•
+        <!--
              Child index constants (see MyKeyboardService.FLIPPER_*):
                0 = keyboard (KeyboardView)
-               1 = emoji panel  (FrameLayout host, populated at runtime)
-               2 = GIF placeholder
-               3 = theme quick-panel
-               4 = settings mini-panel
-        â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â• -->
+               1 = emoji panel (FrameLayout host, populated at runtime)
+               2 = settings quick-panel (legacy mini-panel; full settings
+                   live in KeyboardSettingsActivity)
+        -->
+        <!-- LEGACY PANEL HOST
+             Panels toggled by toolbar buttons (stats, phrases, AI replies,
+             clipboard row, toolbar customizer). They sit ABOVE the keyboard
+             flipper so setVisibility() actually shows them while typing.  -->
+        <LinearLayout
+            android:id="@+id/panels_host"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:orientation="vertical"
+            android:background="@color/toolbar_background">
+
+<LinearLayout
+                        android:id="@+id/toolbar_customizer_panel"
+                        android:layout_width="match_parent"
+                        android:layout_height="180dp"
+                        android:orientation="vertical"
+                        android:background="@color/settings_panel_background"
+                        android:visibility="gone">
+
+                        <LinearLayout
+                            android:layout_width="match_parent"
+                            android:layout_height="wrap_content"
+                            android:orientation="horizontal"
+                            android:gravity="center_vertical"
+                            android:background="#E0E0E0">
+
+                            <TextView
+                                android:layout_width="0dp"
+                                android:layout_height="wrap_content"
+                                android:layout_weight="1"
+                                android:text="Customize Toolbar - check to show, &#9650;&#9660; to reorder"
+                                android:textSize="11sp"
+                                android:textStyle="bold"
+                                android:paddingStart="8dp"
+                                android:paddingEnd="8dp"
+                                android:paddingTop="6dp"
+                                android:paddingBottom="6dp"/>
+
+                            <TextView
+                                android:id="@+id/btn_tb_customizer_done"
+                                android:layout_width="wrap_content"
+                                android:layout_height="wrap_content"
+                                android:text="&#10003; Done"
+                                android:textSize="12sp"
+                                android:textStyle="bold"
+                                android:textColor="#1565C0"
+                                android:background="?android:attr/selectableItemBackground"
+                                android:paddingStart="12dp"
+                                android:paddingEnd="12dp"
+                                android:paddingTop="6dp"
+                                android:paddingBottom="6dp"/>
+
+                        </LinearLayout>
+
+                        <ScrollView
+                            android:layout_width="match_parent"
+                            android:layout_height="0dp"
+                            android:layout_weight="1">
+
+                            <LinearLayout
+                                android:id="@+id/toolbar_customizer_list"
+                                android:layout_width="match_parent"
+                                android:layout_height="wrap_content"
+                                android:orientation="vertical"/>
+
+                        </ScrollView>
+
+                    </LinearLayout>
+<ScrollView
+                        android:id="@+id/stats_panel"
+                        android:layout_width="match_parent"
+                        android:layout_height="120dp"
+                        android:background="@color/stats_panel_background"
+                        android:visibility="gone">
+
+                        <LinearLayout
+                            android:id="@+id/stats_container"
+                            android:layout_width="match_parent"
+                            android:layout_height="wrap_content"
+                            android:orientation="vertical"
+                            android:padding="10dp"/>
+
+                    </ScrollView>
+<LinearLayout
+                        android:id="@+id/clipboard_panel"
+                        android:layout_width="match_parent"
+                        android:layout_height="100dp"
+                        android:orientation="vertical"
+                        android:background="@color/clipboard_panel_background"
+                        android:visibility="gone">
+
+                        <HorizontalScrollView
+                            android:layout_width="match_parent"
+                            android:layout_height="match_parent"
+                            android:scrollbars="none">
+
+                            <LinearLayout
+                                android:id="@+id/clipboard_container"
+                                android:layout_width="wrap_content"
+                                android:layout_height="match_parent"
+                                android:orientation="horizontal"
+                                android:padding="6dp"
+                                android:gravity="center_vertical"/>
+
+                        </HorizontalScrollView>
+
+                    </LinearLayout>
+<HorizontalScrollView
+                        android:id="@+id/phrases_panel"
+                        android:layout_width="match_parent"
+                        android:layout_height="44dp"
+                        android:scrollbars="none"
+                        android:background="@color/phrases_panel_background"
+                        android:visibility="gone">
+
+                        <LinearLayout
+                            android:id="@+id/phrases_container"
+                            android:layout_width="wrap_content"
+                            android:layout_height="match_parent"
+                            android:orientation="horizontal"
+                            android:gravity="center_vertical"
+                            android:paddingStart="6dp"
+                            android:paddingEnd="6dp"/>
+
+                    </HorizontalScrollView>
+<HorizontalScrollView
+                        android:id="@+id/ai_replies_panel"
+                        android:layout_width="match_parent"
+                        android:layout_height="40dp"
+                        android:scrollbars="none"
+                        android:background="@color/ai_chip_background"
+                        android:visibility="gone">
+
+                        <LinearLayout
+                            android:id="@+id/ai_replies_container"
+                            android:layout_width="wrap_content"
+                            android:layout_height="match_parent"
+                            android:orientation="horizontal"
+                            android:gravity="center_vertical"
+                            android:paddingStart="6dp"
+                            android:paddingEnd="6dp"/>
+
+                    </HorizontalScrollView>
+        </LinearLayout>
+
         <!-- ── CLIPBOARD DRAWER ─────────────────────────────────────────────────
              Hidden by default; toggled by the clipboard toolbar button.        -->
         <FrameLayout
@@ -376,7 +441,7 @@
                 android:paddingStart="0dp"
                 android:paddingEnd="0dp"/>
 
-            <!-- â”€â”€ Child 1: EMOJI HOST â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€ -->
+            <!-- ── Child 1: EMOJI HOST ────────────────────────────────────── -->
             <!--  Populated at runtime by EmojiKeyboardView  -->
             <FrameLayout
                 android:id="@+id/emoji_flipper_host"
@@ -392,144 +457,13 @@
                 Legacy panels that the service toggles with setVisibility() are
                 kept here inside a ScrollView so they don't break old service code.
             -->
-            <ScrollView
-                android:id="@+id/misc_panel_host"
-                android:layout_width="match_parent"
-                android:layout_height="wrap_content"
-                android:background="@color/toolbar_background">
-
-                <LinearLayout
-                    android:layout_width="match_parent"
-                    android:layout_height="wrap_content"
-                    android:orientation="vertical">
-
-                    <!-- TOOLBAR CUSTOMIZER PANEL -->
-                    <LinearLayout
-                        android:id="@+id/toolbar_customizer_panel"
-                        android:layout_width="match_parent"
-                        android:layout_height="180dp"
-                        android:orientation="vertical"
-                        android:background="@color/settings_panel_background"
-                        android:visibility="gone">
-
-                        <TextView
-                            android:layout_width="match_parent"
-                            android:layout_height="wrap_content"
-                            android:text="ðŸ› ï¸ Customize Toolbar â€” check to show, â–²â–¼ to reorder"
-                            android:textSize="11sp"
-                            android:textStyle="bold"
-                            android:padding="8dp"
-                            android:background="#E0E0E0"/>
-
-                        <ScrollView
-                            android:layout_width="match_parent"
-                            android:layout_height="0dp"
-                            android:layout_weight="1">
-
-                            <LinearLayout
-                                android:id="@+id/toolbar_customizer_list"
-                                android:layout_width="match_parent"
-                                android:layout_height="wrap_content"
-                                android:orientation="vertical"/>
-
-                        </ScrollView>
-
-                    </LinearLayout>
-
-                    <!-- STATS PANEL -->
-                    <ScrollView
-                        android:id="@+id/stats_panel"
-                        android:layout_width="match_parent"
-                        android:layout_height="120dp"
-                        android:background="@color/stats_panel_background"
-                        android:visibility="gone">
-
-                        <LinearLayout
-                            android:id="@+id/stats_container"
-                            android:layout_width="match_parent"
-                            android:layout_height="wrap_content"
-                            android:orientation="vertical"
-                            android:padding="10dp"/>
-
-                    </ScrollView>
-
-                    <!-- CLIPBOARD PANEL -->
-                    <LinearLayout
-                        android:id="@+id/clipboard_panel"
-                        android:layout_width="match_parent"
-                        android:layout_height="100dp"
-                        android:orientation="vertical"
-                        android:background="@color/clipboard_panel_background"
-                        android:visibility="gone">
-
-                        <HorizontalScrollView
-                            android:layout_width="match_parent"
-                            android:layout_height="match_parent"
-                            android:scrollbars="none">
-
-                            <LinearLayout
-                                android:id="@+id/clipboard_container"
-                                android:layout_width="wrap_content"
-                                android:layout_height="match_parent"
-                                android:orientation="horizontal"
-                                android:padding="6dp"
-                                android:gravity="center_vertical"/>
-
-                        </HorizontalScrollView>
-
-                    </LinearLayout>
-
-                    <!-- PHRASES PANEL -->
-                    <HorizontalScrollView
-                        android:id="@+id/phrases_panel"
-                        android:layout_width="match_parent"
-                        android:layout_height="44dp"
-                        android:scrollbars="none"
-                        android:background="@color/phrases_panel_background"
-                        android:visibility="gone">
-
-                        <LinearLayout
-                            android:id="@+id/phrases_container"
-                            android:layout_width="wrap_content"
-                            android:layout_height="match_parent"
-                            android:orientation="horizontal"
-                            android:gravity="center_vertical"
-                            android:paddingStart="6dp"
-                            android:paddingEnd="6dp"/>
-
-                    </HorizontalScrollView>
-
-                    <!-- AI QUICK REPLIES BAR -->
-                    <HorizontalScrollView
-                        android:id="@+id/ai_replies_panel"
-                        android:layout_width="match_parent"
-                        android:layout_height="40dp"
-                        android:scrollbars="none"
-                        android:background="@color/ai_chip_background"
-                        android:visibility="gone">
-
-                        <LinearLayout
-                            android:id="@+id/ai_replies_container"
-                            android:layout_width="wrap_content"
-                            android:layout_height="match_parent"
-                            android:orientation="horizontal"
-                            android:gravity="center_vertical"
-                            android:paddingStart="6dp"
-                            android:paddingEnd="6dp"/>
-
-                    </HorizontalScrollView>
-
-                </LinearLayout>
-
-            </ScrollView>
-
-        </ViewFlipper>
+            </ViewFlipper>
         <!-- End content_flipper -->
 
     </LinearLayout>
     <!-- End keyboard_root -->
 
-    <!-- â•â• TRACKPAD OVERLAY (sits above everything in the FrameLayout) â•â•â•â•â•â• -->
+    <!-- ══ TRACKPAD OVERLAY (sits above everything in the FrameLayout) ══════ -->
     <LinearLayout
         android:id="@+id/trackpad_overlay"
         android:layout_width="match_parent"
@@ -543,7 +477,7 @@
         <TextView
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
-            android:text="ðŸ‘† Trackpad Mode"
+            android:text="👆 Trackpad Mode"
             android:textColor="#FFFFFF"
             android:textSize="18sp"
             android:textStyle="bold"
@@ -566,14 +500,14 @@
 
     </LinearLayout>
 
-    <!-- â•â• RESIZE OVERLAY â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•
+    <!-- ══ RESIZE OVERLAY ════════════════════════════════════════════════════════
          Sits on top of everything in the outer FrameLayout.
          Shown when resize mode is active (GONE by default).
          Structure matches the Gboard resize UX:
-           â€¢ Top drag-handle strip â†’ user slides finger up/down to set height
-           â€¢ Dim scrim covers the keyboard
-           â€¢ Reset + âœšmove-icon + Done row in the centre
-    â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â• -->
+           • Top drag-handle strip → user slides finger up/down to set height
+           • Dim scrim covers the keyboard
+           • Reset + ✚move-icon + Done row in the centre
+    ════════════════════════════════════════════════════════════════════════════ -->
     <FrameLayout
         android:id="@+id/resize_overlay"
         android:layout_width="match_parent"
@@ -586,7 +520,7 @@
             android:layout_height="match_parent"
             android:background="#88000000"/>
 
-        <!-- Drag handle at the very top â€” user grabs and slides vertically -->
+        <!-- Drag handle at the very top — user grabs and slides vertically -->
         <LinearLayout
             android:id="@+id/resize_drag_handle"
             android:layout_width="match_parent"
@@ -605,7 +539,7 @@
                 android:backgroundTintMode="src_in"/>
         </LinearLayout>
 
-        <!-- Centre row: Reset  âœ›  Done -->
+        <!-- Centre row: Reset  ✛  Done -->
         <LinearLayout
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
@@ -618,18 +552,18 @@
                 android:id="@+id/btn_resize_reset"
                 android:layout_width="140dp"
                 android:layout_height="48dp"
-                android:text="â†º  Reset"
+                android:text="↺  Reset"
                 android:textColor="#FFFFFF"
                 android:textSize="15sp"
                 android:backgroundTint="#1565C0"
                 android:stateListAnimator="@null"
                 android:layout_marginEnd="16dp"/>
 
-            <!-- Move/drag icon â€” purely visual, same drag target as whole overlay -->
+            <!-- Move/drag icon — purely visual, same drag target as whole overlay -->
             <TextView
                 android:layout_width="52dp"
                 android:layout_height="52dp"
-                android:text="âœ›"
+                android:text="✛"
                 android:textSize="24sp"
                 android:textColor="#FFFFFF"
                 android:gravity="center"
@@ -641,7 +575,7 @@
                 android:id="@+id/btn_resize_done"
                 android:layout_width="140dp"
                 android:layout_height="48dp"
-                android:text="âœ“  Done"
+                android:text="✓  Done"
                 android:textColor="#FFFFFF"
                 android:textSize="15sp"
                 android:backgroundTint="#1565C0"

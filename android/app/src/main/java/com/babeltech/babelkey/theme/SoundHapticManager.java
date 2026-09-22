@@ -64,6 +64,7 @@ public class SoundHapticManager {
 
     public void playKeySound() {
         if (currentSound == SOUND_OFF) return;
+        if (soundPool == null) return;
         float vol = soundVolume / 100f;
         Integer soundId = soundIds.get(currentSound);
         if (soundId != null && soundId > 0) {

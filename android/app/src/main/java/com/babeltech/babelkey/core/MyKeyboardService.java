@@ -56,7 +56,8 @@ public class MyKeyboardService extends InputMethodService
     private static final String TAG = "MyKeyboardService";
 
     // Keyboard modes
-    private static final int MODE_QWERTY = 0, MODE_SYMBOLS = 1, MODE_SYM_SHIFT = 2;
+    public static final int MODE_QWERTY = 0; // public: SuggestionManager compares layer against it
+    private static final int MODE_SYMBOLS = 1, MODE_SYM_SHIFT = 2;
     private static final int MODE_EMOJI = 3, MODE_NUMPAD = 4;
     // Shift states
     private static final int SHIFT_OFF = 0, SHIFT_ON = 1, SHIFT_CAPS = 2;
@@ -99,6 +100,8 @@ public class MyKeyboardService extends InputMethodService
     private LinearLayout  clipboardPanel, otpBanner, grammarBanner, statsContainer;
     private LinearLayout  trackpadOverlayLayout, aiRepliesContainer, voiceTypingPanel;
     private LinearLayout  toolbarRow, toolbarCustomizerPanel, toolbarCustomizerList;
+    private LinearLayout  toolbarStripDynamic;
+    private final java.util.LinkedHashMap<String, View> tbBtnViews = new java.util.LinkedHashMap<>();
     private View          phrasesPanel, aiRepliesPanel, emojiPanel;
     private ScrollView    statsPanel, settingsPanel;
     private TextView      otpText, grammarText, themePreviewLabel, voiceStatusText;
@@ -114,7 +117,7 @@ public class MyKeyboardService extends InputMethodService
 
     // ── Symbol long-press popup ───────────────────────────────────────────────
     private SymbolPopupWindow symbolPopup;
-    /** X-centre of the most-recently pressed key, in KeyboardView coordinates (px). */
+    /** X-centre of the most-recently pressed key, in window coordinates (px). */
     private int               longPressKeyX = 0;
 
 
@@ -221,6 +224,7 @@ public class MyKeyboardService extends InputMethodService
         contentFlipper         = keyboardRoot.findViewById(R.id.content_flipper);
         emojiFlipperHost       = keyboardRoot.findViewById(R.id.emoji_flipper_host);
         toolbarRow             = keyboardRoot.findViewById(R.id.toolbar_row);
+        toolbarStripDynamic    = keyboardRoot.findViewById(R.id.toolbar_strip_dynamic);
         voiceTypingPanel       = keyboardRoot.findViewById(R.id.voice_typing_panel);
         voiceStatusText        = keyboardRoot.findViewById(R.id.voice_status_text);
         toolbarCustomizerPanel = keyboardRoot.findViewById(R.id.toolbar_customizer_panel);
@@ -239,10 +243,12 @@ public class MyKeyboardService extends InputMethodService
             android.view.ViewGroup.LayoutParams.WRAP_CONTENT, android.view.ViewGroup.LayoutParams.WRAP_CONTENT);
         keyPreviewPopup.setBackgroundDrawable(null); keyPreviewPopup.setTouchable(false);
         keyPreviewPopup.setFocusable(false); keyPreviewPopup.setOutsideTouchable(false);
-        qwertyKeyboard       = new Keyboard(this, R.xml.keyboard_qwerty);
-        symbolsKeyboard      = new Keyboard(this, R.xml.keyboard_symbols);
-        symbolsShiftKeyboard = new Keyboard(this, R.xml.keyboard_symbols_shift);
-        numpadKeyboard       = new Keyboard(this, R.xml.keyboard_numpad);
+        // ResponsiveKeyboardLayout extends Keyboard and supports fitTo() so the
+        // keyboard scales to the real view width and to user-chosen resize height.
+        qwertyKeyboard       = new com.babeltech.babelkey.layout.ResponsiveKeyboardLayout(this, R.xml.keyboard_qwerty);
+        symbolsKeyboard      = new com.babeltech.babelkey.layout.ResponsiveKeyboardLayout(this, R.xml.keyboard_symbols);
+        symbolsShiftKeyboard = new com.babeltech.babelkey.layout.ResponsiveKeyboardLayout(this, R.xml.keyboard_symbols_shift);
+        numpadKeyboard       = new com.babeltech.babelkey.layout.ResponsiveKeyboardLayout(this, R.xml.keyboard_numpad);
         keyboardView.setOnKeyboardActionListener(this); keyboardView.setPreviewEnabled(false);
         // Touch events are handled by GestureHandler
 
@@ -264,10 +270,12 @@ public class MyKeyboardService extends InputMethodService
         gestureHandler.attachSymbolPopup(symbolPopup);
         gestureHandler.setCurrentMode(currentMode); gestureHandler.setShiftState(shiftState);
         setKbH(prefs.getInt(PREF_KB_H, DEFAULT_DP));
-        wireResizeOverlay(root); wireToolbarStrip(keyboardRoot); wireSettingsPanel();
+        wireResizeOverlay(root); wireSettingsPanel();
         loadToolbarConfig(); rebuildToolbar();
         View bCust = keyboardRoot.findViewById(R.id.btn_customize_toolbar);
         if (bCust != null) bCust.setOnClickListener(v -> toggleTBCustomizer());
+        View bDone = keyboardRoot.findViewById(R.id.btn_tb_customizer_done);
+        if (bDone != null) bDone.setOnClickListener(v -> toggleTBCustomizer());
         View bVB = keyboardRoot.findViewById(R.id.btn_voice_back);
         if (bVB  != null) bVB.setOnClickListener(v -> voiceManager.exitVoiceTypingMode());
         View bVC = keyboardRoot.findViewById(R.id.btn_voice_collapse);
@@ -425,18 +433,21 @@ public class MyKeyboardService extends InputMethodService
                 || (statsPanel != null && statsPanel.getVisibility() == View.VISIBLE)
                 || (settingsPanel != null && settingsPanel.getVisibility() == View.VISIBLE)
                 || (grammarBanner != null && grammarBanner.getVisibility() == View.VISIBLE)
-                || (aiRepliesPanel != null && aiRepliesPanel.getVisibility() == View.VISIBLE);
+                || (aiRepliesPanel != null && aiRepliesPanel.getVisibility() == View.VISIBLE)
+                || (toolbarCustomizerPanel != null && toolbarCustomizerPanel.getVisibility() == View.VISIBLE);
     }
 
     @Override public void onPress(int c) {
         if (keyboardView != null) soundManager.playHaptic(keyboardView, HapticFeedbackConstants.KEYBOARD_TAP);
         soundManager.playKeySound(); lastPressedKeyCode = c;
 
-        // Track key X-centre for popup positioning
+        // Track key X-centre for popup positioning (window coordinates)
         if (keyboardView != null && keyboardView.getKeyboard() != null) {
             for (Keyboard.Key key : keyboardView.getKeyboard().getKeys()) {
                 if (key.codes != null && key.codes.length > 0 && key.codes[0] == c) {
-                    longPressKeyX = key.x + key.width / 2;
+                    int[] kvLoc = new int[2];
+                    keyboardView.getLocationInWindow(kvLoc);
+                    longPressKeyX = kvLoc[0] + keyboardView.getPaddingLeft() + key.x + key.width / 2;
                     break;
                 }
             }
@@ -480,6 +491,8 @@ public class MyKeyboardService extends InputMethodService
     @Override public void onKey(int code, int[] cs) {
         InputConnection ic = getCurrentInputConnection(); if (ic == null) return;
         if (gestureHandler.isInTrackpad()) return;
+        // Typing a key dismisses the Gboard-style toolbar editor (like Gboard)
+        closeTBCustomizer();
         switch (code) {
             case CODE_BACKSPACE:  if (!gestureHandler.isBsGestureUsed()) handleBS(ic); break;
             case CODE_SHIFT:      handleShift(); break;
@@ -648,24 +661,44 @@ public class MyKeyboardService extends InputMethodService
     }
 
     private void handleTBClick(String key) {
+        // Opening any toolbar feature dismisses the editor and other info panels
+        closeTBCustomizer();
+        closeInfoPanels();
         switch (key) {
-            case "translate":   suggManager.handleTranslate();   break;
+            case "translate":
+                if (currentMode == MODE_EMOJI) switchToQwerty();
+                suggManager.handleTranslate();
+                break;
             case "autocorrect":
+                if (currentMode == MODE_EMOJI) switchToQwerty();
                 if (currentMode != MODE_QWERTY) {
-                    android.widget.Toast.makeText(this, "Autocorrect is disabled on symbol/numbers layer", android.widget.Toast.LENGTH_SHORT).show();
+                    Toast.makeText(this, "Autocorrect is disabled on symbol/numbers layer", Toast.LENGTH_SHORT).show();
                     return;
                 }
                 suggManager.handleAutoCorrect();
                 break;
             case "undo":        suggManager.handleUndo();        break;
-            case "emoji":       switchToEmoji();                 break;
-            case "clipboard":   clipManager.toggleDrawer();      break;
+            case "emoji":
+                if (currentMode == MODE_EMOJI) switchToQwerty(); else switchToEmoji();
+                break;
+            case "clipboard":
+                clipManager.toggleDrawer();
+                highlightClipboard(isDrawerOpen());
+                break;
             case "phrases":     suggManager.togglePhrases();     break;
             case "stats":       suggManager.toggleStats();       break;
             case "settings":
             case "theme":       launchSettingsActivity();        break;
             case "voice":       voiceManager.handleVoiceTyping(); break;
         }
+    }
+
+    /** Hide the small info panels (stats / phrases / AI replies / legacy clipboard row) so only one shows at a time. */
+    private void closeInfoPanels() {
+        if (statsPanel     != null) statsPanel.setVisibility(View.GONE);
+        if (phrasesPanel   != null) phrasesPanel.setVisibility(View.GONE);
+        if (aiRepliesPanel != null) aiRepliesPanel.setVisibility(View.GONE);
+        if (clipboardPanel != null) clipboardPanel.setVisibility(View.GONE);
     }
     private void hideAllPanels() {
         if (clipboardPanel  != null) clipboardPanel.setVisibility(View.GONE);
@@ -676,6 +709,7 @@ public class MyKeyboardService extends InputMethodService
         if (aiRepliesPanel  != null) aiRepliesPanel.setVisibility(View.GONE);
         if (clipManager     != null) clipManager.hideDrawer();
         if (symbolPopup     != null) symbolPopup.dismiss();
+        closeTBCustomizer();
     }
     private void launchSettingsActivity() {
         try {
@@ -774,42 +808,55 @@ public class MyKeyboardService extends InputMethodService
         if (keyboardView != null) keyboardView.invalidateAllKeys();
     }
 
-    private void wireToolbarStrip(View root) {
-        View bg  = root.findViewById(R.id.btn_tool_grid);
-        View be  = root.findViewById(R.id.btn_tool_emoji);
-        View bt  = root.findViewById(R.id.btn_tool_translate);
-        View bth = root.findViewById(R.id.btn_tool_gif);
-        View bs  = root.findViewById(R.id.btn_tool_cursor);
-        View bm  = root.findViewById(R.id.btn_tool_mic);
-
-        // Grid → toggle clipboard drawer + highlight icon
-        if (bg  != null) bg.setOnClickListener(v -> {
-            clipManager.toggleDrawer();
-            boolean drawerOpen = (clipboardDrawer != null
-                    && clipboardDrawer.getVisibility() == View.VISIBLE);
-            highlightClipboard(drawerOpen);
-        });
-
-        // Emoji → toggle emoji panel
-        if (be  != null) be.setOnClickListener(v -> {
-            if (contentFlipper != null && contentFlipper.getDisplayedChild() == FLIPPER_EMOJI) {
-                flipTo(FLIPPER_KB);
-            } else {
-                switchToEmoji();
-            }
-        });
-
-        // Translate
-        if (bt  != null) bt.setOnClickListener(v -> { flipTo(FLIPPER_KB); suggManager.handleTranslate(); });
-
-        // Settings (gear icon) → launch KeyboardSettingsActivity
-        if (bs != null) bs.setOnClickListener(v -> launchSettingsActivity());
-
-        // Theme button (palette icon) → directly launch KeyboardSettingsActivity as requested
-        if (bth != null) bth.setOnClickListener(v -> launchSettingsActivity());
-
-        // Mic → enter/exit voice typing mode
-        if (bm  != null) bm.setOnClickListener(v -> voiceManager.handleVoiceTyping());
+    /**
+     * Rebuilds the visible Gboard-style toolbar strip from the saved
+     * toolbarButtonConfig (order + visibility). Each button is tappable
+     * (runs its action) and long-pressable (opens the toolbar editor).
+     */
+    private void rebuildToolbar() {
+        if (toolbarStripDynamic == null) return;
+        toolbarStripDynamic.removeAllViews();
+        tbBtnViews.clear();
+        for (String key : tbOrder) {
+            if (!tbVisible.contains(key)) continue;
+            TBDef def = findDef(key);
+            int iconRes = iconResFor(key);
+            if (def == null || iconRes == 0) continue;
+            android.widget.ImageView btn = new android.widget.ImageView(this);
+            btn.setImageResource(iconRes);
+            btn.setColorFilter(androidx.core.content.ContextCompat.getColor(this, R.color.toolbar_icon_inactive));
+            btn.setScaleType(android.widget.ImageView.ScaleType.CENTER_INSIDE);
+            btn.setPadding(dpToPx(4), dpToPx(4), dpToPx(4), dpToPx(4));
+            btn.setClickable(true);
+            btn.setContentDescription(def.label);
+            LinearLayout.LayoutParams lp = new LinearLayout.LayoutParams(0, dpToPx(48), 1f);
+            lp.setMargins(dpToPx(2), 0, dpToPx(2), 0);
+            btn.setLayoutParams(lp);
+            final String k = key;
+            btn.setOnClickListener(v -> handleTBClick(k));
+            btn.setOnLongClickListener(v -> { openTBCustomizer(); return true; });
+            toolbarStripDynamic.addView(btn);
+            tbBtnViews.put(key, btn);
+        }
+    }
+    /** Vector icon for a toolbar button key (0 = no icon, button is skipped). */
+    private int iconResFor(String key) {
+        switch (key) {
+            case "clipboard":   return R.drawable.ic_clipboard;
+            case "translate":   return R.drawable.ic_tool_translate;
+            case "autocorrect": return R.drawable.ic_tool_autocorrect;
+            case "emoji":       return R.drawable.ic_sticker;
+            case "settings":    return R.drawable.ic_tool_settings;
+            case "theme":       return R.drawable.ic_tool_palette;
+            case "voice":       return R.drawable.ic_tool_mic;
+            case "undo":        return R.drawable.ic_undo;
+            case "phrases":     return R.drawable.ic_tool_phrases;
+            case "stats":       return R.drawable.ic_tool_stats;
+            default:            return 0;
+        }
+    }
+    private boolean isDrawerOpen() {
+        return clipboardDrawer != null && clipboardDrawer.getVisibility() == View.VISIBLE;
     }
     private void flipTo(int child) {
         if (contentFlipper == null) return;
@@ -821,50 +868,112 @@ public class MyKeyboardService extends InputMethodService
      *  Flipper children:  0=KB  1=Emoji  2=Theme  3=Misc
      *  Icon array order:  0=Grid  1=Emoji  2=Cursor  3=Gif  4=Clipboard  5=Translate  6=Mic  7=More
      */
+    /** Highlight the toolbar icon for the currently active panel. */
     private void highlightIcon(int active) {
         if (keyboardRoot == null) return;
-        int[] ids = {R.id.btn_tool_grid, R.id.btn_tool_emoji, R.id.btn_tool_cursor,
-                     R.id.btn_tool_gif, R.id.btn_tool_clipboard, R.id.btn_tool_translate,
-                     R.id.btn_tool_mic, R.id.btn_tool_more};
-        // Map flipper child → icon array index (-1 = no highlight)
-        // FLIPPER_KB=0→none, FLIPPER_EMOJI=1→emoji(1), FLIPPER_THEME=2→gif(3), FLIPPER_MISC=3→none
-        int[] flipperToIcon = {-1, 1, 3, -1};
-        int ai = (active >= 0 && active < flipperToIcon.length) ? flipperToIcon[active] : -1;
+        String key = (active == FLIPPER_EMOJI) ? "emoji" : null;
         int ac = androidx.core.content.ContextCompat.getColor(this, R.color.toolbar_icon_active);
         int ic = androidx.core.content.ContextCompat.getColor(this, R.color.toolbar_icon_inactive);
-        for (int i = 0; i < ids.length; i++) {
-            View v = keyboardRoot.findViewById(ids[i]);
-            int color = (i == ai) ? ac : ic;
-            if (v instanceof android.widget.ImageView) ((android.widget.ImageView) v).setColorFilter(color);
-            else if (v instanceof TextView) ((TextView) v).setTextColor(color);
+        for (java.util.Map.Entry<String, View> e : tbBtnViews.entrySet()) {
+            if (e.getValue() instanceof android.widget.ImageView) {
+                ((android.widget.ImageView) e.getValue()).setColorFilter(
+                    (key != null && key.equals(e.getKey())) ? ac : ic);
+            }
         }
+        highlightClipboard(isDrawerOpen());
     }
 
-    /** Highlight or un-highlight the clipboard/grid icon when the drawer toggles. */
+    /** Highlight or un-highlight the clipboard button when the drawer toggles. */
     private void highlightClipboard(boolean open) {
-        if (keyboardRoot == null) return;
-        View v = keyboardRoot.findViewById(R.id.btn_tool_grid);
-        int color = open
-            ? androidx.core.content.ContextCompat.getColor(this, R.color.toolbar_icon_active)
-            : androidx.core.content.ContextCompat.getColor(this, R.color.toolbar_icon_inactive);
-        if (v instanceof android.widget.ImageView) ((android.widget.ImageView) v).setColorFilter(color);
+        View v = tbBtnViews.get("clipboard");
+        if (v instanceof android.widget.ImageView) {
+            int c = androidx.core.content.ContextCompat.getColor(this,
+                open ? R.color.toolbar_icon_active : R.color.toolbar_icon_inactive);
+            ((android.widget.ImageView) v).setColorFilter(c);
+        }
     }
     private void loadToolbarConfig() {
         tbOrder.clear(); tbVisible.clear();
         String cfg = prefs.getString(PREF_TOOLBAR, "");
         if (!cfg.isEmpty()) { for (String e : cfg.split(",")) { String[] p = e.split(":"); if (p.length == 2) { tbOrder.add(p[0]); if ("1".equals(p[1])) tbVisible.add(p[0]); } } }
         if (tbOrder.isEmpty()) { for (TBDef d : allBtns) { tbOrder.add(d.key); tbVisible.add(d.key); } }
+        if (!tbOrder.contains(PERM_KEY)) tbOrder.add(PERM_KEY);
         tbVisible.add(PERM_KEY);
     }
     private void saveTBConfig() { StringBuilder sb = new StringBuilder(); for (String k : tbOrder) sb.append(k).append(":").append(tbVisible.contains(k) ? "1" : "0").append(","); prefs.edit().putString(PREF_TOOLBAR, sb.toString()).apply(); }
-    private void rebuildToolbar() {
+    // The legacy scrollable row stays hidden (visibility=gone); the visible
+    // toolbar is the dynamic strip built by rebuildToolbar() above.
+    private void rebuildLegacyToolbarRow() {
         if (toolbarRow == null) return; toolbarRow.removeAllViews();
         for (String key : tbOrder) { if (!tbVisible.contains(key)) continue; TBDef def = findDef(key); if (def == null) continue; TextView btn = new TextView(this); btn.setText(def.icon); btn.setTextSize(26f); btn.setGravity(android.view.Gravity.CENTER); btn.setPadding(dpToPx(12), dpToPx(8), dpToPx(12), dpToPx(8)); btn.setTextColor(androidx.core.content.ContextCompat.getColor(this, R.color.toolbar_icon_inactive)); LinearLayout.LayoutParams lp = new LinearLayout.LayoutParams(LinearLayout.LayoutParams.WRAP_CONTENT, LinearLayout.LayoutParams.WRAP_CONTENT); lp.setMargins(4, 0, 4, 0); btn.setLayoutParams(lp); final String k = key; btn.setOnClickListener(v -> handleTBClick(k)); toolbarRow.addView(btn); }
     }
-    private void toggleTBCustomizer() { if (toolbarCustomizerPanel == null) return; boolean v = toolbarCustomizerPanel.getVisibility() == View.VISIBLE; toolbarCustomizerPanel.setVisibility(v ? View.GONE : View.VISIBLE); if (!v) refreshTBCustomizer(); }
+    private void toggleTBCustomizer() {
+        if (toolbarCustomizerPanel == null) return;
+        boolean open = toolbarCustomizerPanel.getVisibility() != View.VISIBLE;
+        if (open) {
+            hideAllPanels();
+            toolbarCustomizerPanel.setVisibility(View.VISIBLE);
+            refreshTBCustomizer();
+        } else {
+            toolbarCustomizerPanel.setVisibility(View.GONE);
+        }
+    }
+    private void openTBCustomizer() {
+        if (toolbarCustomizerPanel == null) return;
+        if (toolbarCustomizerPanel.getVisibility() != View.VISIBLE) toggleTBCustomizer();
+    }
+    private void closeTBCustomizer() {
+        if (toolbarCustomizerPanel != null && toolbarCustomizerPanel.getVisibility() == View.VISIBLE)
+            toolbarCustomizerPanel.setVisibility(View.GONE);
+    }
+    /** Gboard-style editor row per button: checkbox (show/hide) + up/down reorder. */
     private void refreshTBCustomizer() {
-        if (toolbarCustomizerList == null) return; toolbarCustomizerList.removeAllViews();
-        for (String key : tbOrder) { if (PERM_KEY.equals(key)) continue; TBDef def = findDef(key); if (def == null) continue; android.widget.CheckBox cb = new android.widget.CheckBox(this); cb.setText(def.icon + " " + def.label); cb.setChecked(tbVisible.contains(key)); cb.setTextColor(themeManager.isDark() ? Color.WHITE : androidx.core.content.ContextCompat.getColor(this, R.color.key_text_color)); cb.setOnCheckedChangeListener((b, ch) -> { if (ch) tbVisible.add(key); else tbVisible.remove(key); saveTBConfig(); rebuildToolbar(); }); toolbarCustomizerList.addView(cb); }
+        if (toolbarCustomizerList == null) return;
+        toolbarCustomizerList.removeAllViews();
+        android.view.LayoutInflater infl = android.view.LayoutInflater.from(this);
+        boolean dark = themeManager.isDark();
+        int rowBg = dark ? 0xFF232A31 : 0xFFFFFFFF;
+        int labelColor = dark ? 0xFFFFFFFF : 0xFF1A1A1A;
+        for (int i = 0; i < tbOrder.size(); i++) {
+            final String key = tbOrder.get(i);
+            TBDef def = findDef(key);
+            if (def == null) continue;
+            View row = infl.inflate(R.layout.toolbar_customizer_item, toolbarCustomizerList, false);
+            row.setBackgroundColor(rowBg);
+            android.widget.CheckBox cb = row.findViewById(R.id.item_checkbox);
+            TextView icon = row.findViewById(R.id.item_icon);
+            TextView label = row.findViewById(R.id.item_label);
+            TextView up = row.findViewById(R.id.item_move_up);
+            TextView down = row.findViewById(R.id.item_move_down);
+            boolean isCore = PERM_KEY.equals(key);
+            icon.setText(def.icon);
+            label.setText(def.label + (isCore ? " (core)" : ""));
+            label.setTextColor(labelColor);
+            cb.setChecked(tbVisible.contains(key));
+            cb.setEnabled(!isCore);
+            final int pos = i;
+            up.setOnClickListener(v -> moveTB(pos, -1));
+            down.setOnClickListener(v -> moveTB(pos, 1));
+            cb.setOnCheckedChangeListener((b, ch) -> {
+                if (isCore) { if (!ch) cb.setChecked(true); return; }
+                if (ch) {
+                    tbVisible.add(key);
+                } else {
+                    if (tbVisible.size() <= 1) { cb.setChecked(true); Toast.makeText(this, "Keep at least one toolbar button", Toast.LENGTH_SHORT).show(); return; }
+                    tbVisible.remove(key);
+                }
+                saveTBConfig(); rebuildToolbar();
+            });
+            toolbarCustomizerList.addView(row);
+        }
+    }
+    private void moveTB(int idx, int dir) {
+        int j = idx + dir;
+        if (idx < 0 || j < 0 || j >= tbOrder.size()) return;
+        String t = tbOrder.get(idx);
+        tbOrder.set(idx, tbOrder.get(j));
+        tbOrder.set(j, t);
+        saveTBConfig(); rebuildToolbar(); refreshTBCustomizer();
     }
     private TBDef findDef(String k) { for (TBDef d : allBtns) if (d.key.equals(k)) return d; return null; }
 

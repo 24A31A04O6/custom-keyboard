@@ -4,7 +4,7 @@
 
 # ─── Input Method Service ─────────────────────────────────────────────────────
 # The Android OS instantiates the IME service by name; it must never be renamed.
--keep public class com.babeltech.babelkey.MyKeyboardService { *; }
+-keep public class com.babeltech.babelkey.core.MyKeyboardService { *; }
 
 # ─── All app Activities & helper classes ──────────────────────────────────────
 -keep public class com.babeltech.babelkey.** { *; }

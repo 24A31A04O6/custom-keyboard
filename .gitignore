@@ -16,3 +16,7 @@ local.properties
 node_modules/
 dist/
 .build-outputs/
+
+# Python bytecode
+__pycache__/
+*.pyc

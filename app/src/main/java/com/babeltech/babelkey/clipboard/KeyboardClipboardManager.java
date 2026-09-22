@@ -182,12 +182,10 @@ public class KeyboardClipboardManager {
 
     private void trimHistory() {
         int historyCount = 0;
-        for (int i = items.size() - 1; i >= 0; i--) {
-            if (!items.get(i).pinned) {
-                historyCount++;
-                if (historyCount > MAX_HISTORY) {
-                    items.remove(i);
-                }
+        for (java.util.Iterator<ClipItem> iterator = items.iterator(); iterator.hasNext();) {
+            ClipItem item = iterator.next();
+            if (!item.pinned && ++historyCount > MAX_HISTORY) {
+                iterator.remove();
             }
         }
     }
@@ -206,8 +204,11 @@ public class KeyboardClipboardManager {
             for (ClipItem it : items) { if (it.pinned) ins++; else break; }
             items.add(ins, item);
         }
+        trimHistory();
+        save();
         savePinned();
         if (adapter != null) adapter.notifyDataSetChanged();
+        updateEmptyState();
         Toast.makeText(ctx, item.pinned ? "Pinned" : "Unpinned", Toast.LENGTH_SHORT).show();
     }
 
@@ -286,20 +287,26 @@ public class KeyboardClipboardManager {
 
     public void loadHistory() {
         items.clear();
+        java.util.Set<String> seen = new java.util.HashSet<>();
         // Load pinned first
         String pinStr = prefs.getString(PREF_PIN, "");
         if (!pinStr.isEmpty()) {
             for (String s : pinStr.split(Pattern.quote(SEP))) {
-                if (!s.isEmpty()) items.add(new ClipItem(s, true));
+                if (!s.isEmpty() && seen.add(s)) items.add(new ClipItem(s, true));
             }
         }
         // Load history
         String histStr = prefs.getString(PREF_CB, "");
         if (!histStr.isEmpty()) {
             for (String s : histStr.split(Pattern.quote(SEP))) {
-                if (!s.isEmpty()) items.add(new ClipItem(s, false));
+                if (!s.isEmpty() && seen.add(s)) items.add(new ClipItem(s, false));
             }
         }
+        trimHistory();
+        save();
+        savePinned();
+        if (adapter != null) adapter.notifyDataSetChanged();
+        updateEmptyState();
     }
 
     // kept for back-compat call in MyKeyboardService
@@ -319,7 +326,7 @@ public class KeyboardClipboardManager {
         adapter = null; otpBanner = null; otpText = null;
     }
 
-    public void destroy() { stopListening(); }
+    public void destroy() { stopListening(); handler.removeCallbacksAndMessages(null); detach(); }
 
     // ── Legacy compat (panel toggle used by old toolbar wiring) ─────────────
 

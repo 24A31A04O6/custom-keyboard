@@ -48,6 +48,8 @@ public class SymbolPopupWindow {
     private       String[]      currentSymbols;
     private       OnSymbolCommit commitListener;
     private       boolean        showing = false;
+    /** Left edge of the popup in window coordinates (set in show()). */
+    private       int            popupWindowX = 0;
 
     public SymbolPopupWindow(Context ctx) {
         this.ctx     = ctx;
@@ -111,6 +113,7 @@ public class SymbolPopupWindow {
         // Clamp to screen
         int screenW = ctx.getResources().getDisplayMetrics().widthPixels;
         xOff = Math.max(0, Math.min(xOff, screenW - totalW));
+        popupWindowX = anchorLoc[0] + xOff;
 
         int yOff = -cellH - dp(8); // 8dp gap above the key
 
@@ -167,9 +170,7 @@ public class SymbolPopupWindow {
      */
     public int getPopupX(View anchor) {
         if (!showing || cellContainer == null) return 0;
-        int[] loc = new int[2];
-        anchor.getLocationInWindow(loc);
-        return loc[0]; // caller must add the xOff used in show(); store it
+        return popupWindowX;
     }
 
     // ────────────────────────────────────────────────────────────────────────

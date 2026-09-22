@@ -39,7 +39,7 @@ public class BabelKeyboardView extends KeyboardView {
     // Simultaneous Multi-Touch Key Tracking per Pointer ID
     private final SparseArray<Keyboard.Key> activeKeysByPointer = new SparseArray<>();
     private final SparseArray<Runnable> longPressRunnables = new SparseArray<>();
-    private final SparseBooleanArray longPressFired = new SparseBooleanArray<>();
+    private final SparseBooleanArray longPressFired = new SparseBooleanArray();
     private final Handler touchHandler = new Handler(Looper.getMainLooper());
 
     public void setKeyboardHeight(int height) {
@@ -66,7 +66,7 @@ public class BabelKeyboardView extends KeyboardView {
     }
 
     @Override
-    protected void onMeasure(int widthMeasureSpec, int heightMeasureSpec) {
+    public void onMeasure(int widthMeasureSpec, int heightMeasureSpec) {
         if (MeasureSpec.getMode(widthMeasureSpec) != MeasureSpec.UNSPECIFIED) {
             fitKeyboard(MeasureSpec.getSize(widthMeasureSpec));
         }
@@ -74,7 +74,7 @@ public class BabelKeyboardView extends KeyboardView {
     }
 
     @Override
-    protected void onSizeChanged(int width, int height, int oldWidth, int oldHeight) {
+    public void onSizeChanged(int width, int height, int oldWidth, int oldHeight) {
         super.onSizeChanged(width, height, oldWidth, oldHeight);
         fitKeyboard(width);
         invalidateAllKeys();

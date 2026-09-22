@@ -31,7 +31,7 @@
 
     <!-- Row 4 -->
     <Row android:rowEdgeFlags="bottom">
-        <Key android:codes="44"  android:keyLabel="," android:keyEdgeFlags="left"/>
+        <Key android:codes="-3"  android:keyLabel="ABC" android:keyEdgeFlags="left"/>
         <Key android:codes="48"  android:keyLabel="0" />
         <Key android:codes="46"  android:keyLabel="." />
         <Key android:codes="-4"  android:keyIcon="@drawable/ic_enter" android:keyBackground="@drawable/key_background_action" android:keyEdgeFlags="right"/>

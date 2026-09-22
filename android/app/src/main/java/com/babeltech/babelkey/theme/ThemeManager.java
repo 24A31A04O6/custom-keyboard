@@ -121,13 +121,13 @@ public class ThemeManager {
             raw.compress(Bitmap.CompressFormat.JPEG, 85, baos);
             byte[] ba = baos.toByteArray();
             bm = BitmapFactory.decodeByteArray(ba, 0, ba.length, opts);
+            if (bm == null) bm = raw; // downsample decode failed — fall back to original
 
             // Recycle the temporary raw bitmap immediately — it is no longer needed
             // now that bm holds the downsampled copy. Guard against the edge case
-            // where decodeByteArray returns the same object as raw.
+            // where bm IS raw (fallback above).
             if (raw != bm && !raw.isRecycled()) {
                 raw.recycle();
-                raw = null;
             }
         } else {
             // No downsampling needed — use raw directly (caller may pass its own ref)

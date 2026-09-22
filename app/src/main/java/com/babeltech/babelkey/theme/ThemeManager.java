@@ -121,13 +121,13 @@ public class ThemeManager {
             raw.compress(Bitmap.CompressFormat.JPEG, 85, baos);
             byte[] ba = baos.toByteArray();
             bm = BitmapFactory.decodeByteArray(ba, 0, ba.length, opts);
+            if (bm == null) bm = raw; // downsample decode failed — fall back to original
 
             // Recycle the temporary raw bitmap immediately — it is no longer needed
             // now that bm holds the downsampled copy. Guard against the edge case
-            // where decodeByteArray returns the same object as raw.
+            // where bm IS raw (fallback above).
             if (raw != bm && !raw.isRecycled()) {
                 raw.recycle();
-                raw = null;
             }
         } else {
             // No downsampling needed — use raw directly (caller may pass its own ref)
@@ -167,12 +167,6 @@ public class ThemeManager {
     public void applySuggestionBarColor(String hex) { if(root==null) return; View b=root.findViewById(R.id.suggestion_scroll); if(b!=null) b.setBackgroundColor(Color.parseColor(hex)); }
 
     public void setTheme(int theme) { currentTheme=theme; prefs.edit().putInt(PREF_THEME,theme).apply(); applyCurrentTheme(); }
-    public void reloadPreferences() {
-        currentTheme = prefs.getInt(PREF_THEME, THEME_DARK);
-        bgUri = prefs.getString(PREF_BG_URI, null);
-        isDark = (currentTheme != THEME_LIGHT);
-        applyCurrentTheme();
-    }
     public void setCustomBgUri(String uri) { bgUri=uri; prefs.edit().putString(PREF_BG_URI,uri).apply(); if(currentTheme==THEME_CUSTOM_IMAGE) applyCurrentTheme(); }
     public int getCurrentTheme() { return currentTheme; }
     public boolean isDark() { return isDark; }

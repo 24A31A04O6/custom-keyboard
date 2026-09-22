@@ -60,7 +60,8 @@
             android:name=".theme.PickImageActivity"
             android:exported="false"
             android:theme="@android:style/Theme.Translucent.NoTitleBar"
-            android:excludeFromRecents="true"/>
+            android:excludeFromRecents="true"
+            android:configChanges="orientation|screenSize|keyboardHidden"/>
 
         <!--
             KeyboardSettingsActivity — full-screen settings screen.
@@ -83,7 +84,7 @@
 
         <activity
             android:name=".theme.SettingsThemeActivity"
-            android:exported="true"
+            android:exported="false"
             android:label="Theme"
             android:theme="@style/Theme.MyApplication"/>
 

@@ -14,6 +14,7 @@ import android.widget.ScrollView;
 import android.widget.TextView;
 import android.widget.Toast;
 import com.babeltech.babelkey.R;
+import com.babeltech.babelkey.core.MyKeyboardService;
 import com.babeltech.babelkey.core.ServiceCallback;
 import com.babeltech.babelkey.translate.TranslationService;
 import org.json.JSONException;
@@ -45,8 +46,12 @@ public class SuggestionManager implements SuggestionView.SuggestionClickListener
 
     public final Map<String, List<String>> DICT        = new HashMap<>();
     public final Map<String, List<String>> TEL_ENG_DICT = new HashMap<>();
-    public final Map<String, String> TRANSLATE_DICT    = new HashMap<>();
-    public final Map<String, String> AUTOCORRECT_DICT  = new HashMap<>();
+    public final Map<String, List<String>> TELUGU_DICT = new HashMap<>();
+    public final Map<String, String> TRANSLATE_DICT         = new HashMap<>();
+    public final Map<String, String> TRANSLATE_REVERSE_DICT = new HashMap<>();
+    public final List<String> TRANSLATE_EN_PHRASES          = new ArrayList<>();
+    public final List<String> TRANSLATE_TE_PHRASES          = new ArrayList<>();
+    public final Map<String, String> AUTOCORRECT_DICT       = new HashMap<>();
     public final Map<String, String> EMOJI_SUGGESTIONS = new HashMap<>();
     public static final Map<String, String> GRAMMAR_DICT = new HashMap<>();
     static {
@@ -95,6 +100,7 @@ public class SuggestionManager implements SuggestionView.SuggestionClickListener
         loadKVDict(R.raw.emoji_suggestions,EMOJI_SUGGESTIONS,"EMOJI");
         loadPrefixDict(R.raw.suggestions_dict,DICT,"DICT");
         loadPrefixDict(R.raw.tel_eng_dict,TEL_ENG_DICT,"TEL_ENG");
+        loadPrefixDict(R.raw.telugu_dict,TELUGU_DICT,"TELUGU");
         learnedWords=new HashSet<>(prefs.getStringSet(PREF_LEARNED,new HashSet<>()));
         personalDict=new HashSet<>(prefs.getStringSet(PREF_PERSONAL,new HashSet<>()));
         loadShortcuts(); loadPhrases(); loadStats();
@@ -132,6 +138,13 @@ public class SuggestionManager implements SuggestionView.SuggestionClickListener
     }
 
     // Suggestions
+    /** Refresh suggestions for an explicit current-word snapshot (hardware-keyboard path). */
+    public void updateSuggestions(String word) {
+        currentWord.setLength(0);
+        if (word != null) currentWord.append(word);
+        updateSuggestions();
+    }
+
     public void updateSuggestions() {
         if(sugView==null) return;
         if(!isAlphabeticLayer) { sugView.clear(); return; }
@@ -204,10 +217,8 @@ public class SuggestionManager implements SuggestionView.SuggestionClickListener
 
             @Override
             public void onFailure(String error) {
-                // Fallback to local dictionary translation
-                StringBuilder tr=new StringBuilder(); int i=0;
-                while(i<sent.length()){char ch=sent.charAt(i);if(Character.isLetter(ch)){int ws=i;while(i<sent.length()&&Character.isLetter(sent.charAt(i)))i++;String w=sent.substring(ws,i);String tw=TRANSLATE_DICT.get(w.toLowerCase());if(tw!=null){if(Character.isUpperCase(w.charAt(0)))tw=Character.toUpperCase(tw.charAt(0))+tw.substring(1);tr.append(tw);}else tr.append(w);}else{tr.append(ch);i++;}}
-                String res=tr.toString();
+                // Fallback to offline dictionary translation with bidirectional phrase & word matching
+                String res = translateOffline(sent);
                 if(!res.equals(sent)){
                     applyTranslation(sent, res, ic);
                 } else {
@@ -215,6 +226,71 @@ public class SuggestionManager implements SuggestionView.SuggestionClickListener
                 }
             }
         });
+    }
+
+    public String translateOffline(String input) {
+        if (input == null || input.trim().isEmpty()) return input;
+        String trimmed = input.trim();
+        String lowerTrimmed = trimmed.toLowerCase();
+
+        // 1. Direct whole-sentence match (English -> Telugu or Telugu -> English)
+        if (TRANSLATE_DICT.containsKey(lowerTrimmed)) {
+            String target = TRANSLATE_DICT.get(lowerTrimmed);
+            if (target != null) {
+                return Character.isUpperCase(trimmed.charAt(0)) ? Character.toUpperCase(target.charAt(0)) + target.substring(1) : target;
+            }
+        }
+        if (TRANSLATE_REVERSE_DICT.containsKey(lowerTrimmed)) {
+            String target = TRANSLATE_REVERSE_DICT.get(lowerTrimmed);
+            if (target != null) {
+                return Character.isUpperCase(trimmed.charAt(0)) ? Character.toUpperCase(target.charAt(0)) + target.substring(1) : target;
+            }
+        }
+
+        // 2. Phrase matching
+        String working = input;
+        for (String phrase : TRANSLATE_EN_PHRASES) {
+            String target = TRANSLATE_DICT.get(phrase);
+            if (target != null) {
+                working = java.util.regex.Pattern.compile("(?i)\\b" + java.util.regex.Pattern.quote(phrase) + "\\b")
+                        .matcher(working).replaceAll(java.util.regex.Matcher.quoteReplacement(target));
+            }
+        }
+        for (String phrase : TRANSLATE_TE_PHRASES) {
+            String target = TRANSLATE_REVERSE_DICT.get(phrase);
+            if (target != null) {
+                working = java.util.regex.Pattern.compile("(?i)\\b" + java.util.regex.Pattern.quote(phrase) + "\\b")
+                        .matcher(working).replaceAll(java.util.regex.Matcher.quoteReplacement(target));
+            }
+        }
+
+        // 3. Word token translation
+        StringBuilder tr = new StringBuilder();
+        int i = 0;
+        while (i < working.length()) {
+            char ch = working.charAt(i);
+            if (Character.isLetter(ch)) {
+                int ws = i;
+                while (i < working.length() && Character.isLetter(working.charAt(i))) i++;
+                String w = working.substring(ws, i);
+                String wl = w.toLowerCase();
+                String tw = TRANSLATE_DICT.get(wl);
+                if (tw == null) tw = TRANSLATE_REVERSE_DICT.get(wl);
+
+                if (tw != null) {
+                    if (Character.isUpperCase(w.charAt(0))) {
+                        tw = Character.toUpperCase(tw.charAt(0)) + tw.substring(1);
+                    }
+                    tr.append(tw);
+                } else {
+                    tr.append(w);
+                }
+            } else {
+                tr.append(ch);
+                i++;
+            }
+        }
+        return tr.toString();
     }
 
     private void applyTranslation(String origSent, String translated, InputConnection ic) {
@@ -340,8 +416,39 @@ public class SuggestionManager implements SuggestionView.SuggestionClickListener
 
     // Dict loaders
     private void loadTransDict() {
-        TRANSLATE_DICT.clear(); InputStream is=null;
-        try{is=ctx.getResources().openRawResource(R.raw.translations);BufferedReader r=new BufferedReader(new InputStreamReader(is,StandardCharsets.UTF_8));StringBuilder sb=new StringBuilder();String l;while((l=r.readLine())!=null)sb.append(l);r.close();String json=sb.toString();if(json.trim().isEmpty())return;JSONObject o=new JSONObject(json);java.util.Iterator<String>ks=o.keys();while(ks.hasNext()){String k=ks.next();try{String v=o.getString(k);if(k!=null&&!k.trim().isEmpty()&&v!=null&&!v.trim().isEmpty())TRANSLATE_DICT.put(k.trim().toLowerCase(),v.trim());}catch(JSONException ig){}}Log.i(TAG,"Trans: "+TRANSLATE_DICT.size());}catch(Exception e){Log.e(TAG,"Trans error",e);}finally{if(is!=null)try{is.close();}catch(IOException ig){}}
+        TRANSLATE_DICT.clear();
+        TRANSLATE_REVERSE_DICT.clear();
+        TRANSLATE_EN_PHRASES.clear();
+        TRANSLATE_TE_PHRASES.clear();
+        InputStream is=null;
+        try{
+            is=ctx.getResources().openRawResource(R.raw.translations);
+            BufferedReader r=new BufferedReader(new InputStreamReader(is,StandardCharsets.UTF_8));
+            StringBuilder sb=new StringBuilder();String l;
+            while((l=r.readLine())!=null)sb.append(l);
+            r.close();
+            String json=sb.toString();
+            if(json.trim().isEmpty())return;
+            JSONObject o=new JSONObject(json);
+            java.util.Iterator<String>ks=o.keys();
+            while(ks.hasNext()){
+                String k=ks.next();
+                try{
+                    String v=o.getString(k);
+                    if(k!=null&&!k.trim().isEmpty()&&v!=null&&!v.trim().isEmpty()){
+                        String keyLower = k.trim().toLowerCase();
+                        String valTrimmed = v.trim();
+                        TRANSLATE_DICT.put(keyLower, valTrimmed);
+                        TRANSLATE_REVERSE_DICT.put(valTrimmed.toLowerCase(), k.trim());
+                        if (keyLower.contains(" ")) TRANSLATE_EN_PHRASES.add(keyLower);
+                        if (valTrimmed.contains(" ")) TRANSLATE_TE_PHRASES.add(valTrimmed.toLowerCase());
+                    }
+                }catch(JSONException ig){}
+            }
+            java.util.Collections.sort(TRANSLATE_EN_PHRASES, (a, b) -> b.length() - a.length());
+            java.util.Collections.sort(TRANSLATE_TE_PHRASES, (a, b) -> b.length() - a.length());
+            Log.i(TAG,"Trans: "+TRANSLATE_DICT.size()+", Rev: "+TRANSLATE_REVERSE_DICT.size());
+        }catch(Exception e){Log.e(TAG,"Trans error",e);}finally{if(is!=null)try{is.close();}catch(IOException ig){}}
     }
     private void loadKVDict(int res, Map<String,String> target, String name) {
         target.clear(); InputStream is=null;

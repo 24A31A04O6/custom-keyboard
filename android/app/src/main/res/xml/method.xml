@@ -6,7 +6,7 @@
     - The imeSubtypeMode="keyboard" is required for standard keyboards
 -->
 <input-method xmlns:android="http://schemas.android.com/apk/res/android"
-    android:settingsActivity=""
+    android:settingsActivity="com.babeltech.babelkey.settings.KeyboardSettingsActivity"
     android:isDefault="false">
 
     <subtype

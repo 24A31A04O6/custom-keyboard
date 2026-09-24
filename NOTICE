@@ -26,8 +26,8 @@ This product includes software from the following projects:
    Copyright (c) 2002 JSON.org
    Permission is hereby granted ... "The Software shall be used for Good, not Evil."
 
-7. Google ML Kit Smart Reply (Google ML Kit Terms — Phase 3 only, gated OFF)
-   Copyright Google LLC.
+7. Google ML Kit Smart Reply 17.0.4 (Google ML Kit Terms — on-device, opt-in)
+   Copyright Google LLC. https://developers.google.com/ml-kit
 
 8. Google Play Services Auth API Phone — SMS Retriever (Phase 2)
    Copyright Google LLC. https://developers.google.com/identity/sms-retriever
@@ -35,9 +35,11 @@ This product includes software from the following projects:
 9. Google Fonts via Play Services Fonts / Compose Google Fonts (Phase 2, opt-in)
    Copyright respective font authors; most under SIL OFL 1.1 or Apache 2.0.
 
+10. Giphy GIF search (Phase 3, opt-in, HTTPS api.giphy.com)
+    Copyright Giphy, Inc. https://giphy.com — attribution "Powered by Giphy" displayed. Terms: https://giphy.com/legal
+
 If this APK is distributed, a copy of the Apache License 2.0 must accompany it
 (see LICENSE file).
 
-Emoji: Unicode code points are not copyrighted; no additional notice required
-for Phase 1. Phase 2 fonts are downloaded on demand over HTTPS; their individual
-SIL OFL / Apache 2.0 notices will be appended when a font is chosen.
+Emoji: Unicode code points are not copyrighted; no additional notice required.
+Fonts downloaded on demand over HTTPS; their individual SIL OFL / Apache 2.0 notices appended when chosen.

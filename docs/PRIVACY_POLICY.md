@@ -1,4 +1,4 @@
-# BabelKey Privacy Policy (Phase 1 — matches actual code behavior)
+# BabelKey Privacy Policy (Phase 3 — matches actual code behavior)
 
 **Last updated:** 2026-09-24  
 **App:** BabelKey (com.babeltech.babelkey), Android IME  
@@ -33,10 +33,13 @@ only over HTTPS, with the provider named).
 
 | Feature | Provider | What is sent | When |
 |---|---|---|---|
-| Online translation fallback | `api.babeltech.com` (current) — HTTPS only | The sentence you request to translate | Only if you enable "Online translation" in Settings |
+| Online translation fallback | `api.babeltech.com` — HTTPS only | The sentence you request to translate | Only if you enable "Online translation" in Settings |
 | Voice typing | Android's built-in `SpeechRecognizer` | Audio to Google's speech service via the OS | Only when you tap the mic and grant RECORD_AUDIO |
-| AI Smart Replies (Phase 3) | ML Kit on-device or named HTTPS API | Context text (if enabled) | Only if you opt in in Settings |
-| GIF search / Google Fonts (Phase 2/3) | Provider not yet chosen | — | Will be disclosed before enablement |
+| AI Smart Replies | **On-device:** Google ML Kit Smart Reply (offline TFLite, **no network**). **Online fallback (stub, not shipped):** `generativelanguage.googleapis.com` (Google) — would send last remote message only if you opt in and `allowOnline=true` | Last remote message text (only if opted in + allowOnline) | Default OFF; on-device runs offline even when enabled (no data sent). Online would be HTTPS opt-in, provider named |
+| GIF search | **Giphy** (`api.giphy.com`) — HTTPS only, attribution "Powered by Giphy" | Search query text (e.g., "happy") | Only if you enable "GIF search" in Settings + have API key; trending/search over GET `https://api.giphy.com/v1/gifs/search?api_key=...&q=...` |
+| Sticker search | Same as GIF (Giphy) or local curated set (offline) | Same as GIF | Local stickers no network; online stickers share GIF opt-in |
+| Google Fonts | `com.google.android.gms.fonts` (Play Services) + `fonts.googleapis.com` | Font name (e.g., "Poppins") | Only if you pick a non-default font in Font picker (System Default is offline) |
+| One-handed mode | *No network* — local layout preference (LEFT/RIGHT/OFF + width) | — | — |
 
 You can turn any online feature off at any time in Settings. Turning it off
 stops all network calls for that feature.

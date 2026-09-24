@@ -12,8 +12,12 @@ import com.babeltech.babelkey.core.otp.OtpSmsReceiver
 import com.babeltech.babelkey.core.suggestion.UndoManager
 import com.babeltech.babelkey.data.dictionaries.DictionaryRepository
 import com.babeltech.babelkey.data.dictionaries.MigrationTool
+import com.babeltech.babelkey.core.smartreply.SmartReplyEngine
+import com.babeltech.babelkey.data.gif.GifRepository
 import com.babeltech.babelkey.data.preferences.FontRepository
+import com.babeltech.babelkey.data.preferences.OneHandedPrefs
 import com.babeltech.babelkey.data.preferences.PreferencesRepository
+import com.babeltech.babelkey.security.NetworkPolicy
 import com.babeltech.babelkey.security.SecureFieldGuard
 import com.babeltech.babelkey.ui.toolbar.ScreenshotDetector
 import com.google.android.gms.auth.api.phone.SmsRetriever
@@ -25,11 +29,8 @@ import com.google.android.gms.auth.api.phone.SmsRetriever
  * All feature logic lives in core/ and data/.
  *
  * Phase 1: thin service with dictionary verification + secure-field gating.
- * Phase 2 additions (wired here, UI integration incremental):
- * - GlideTypingEngine (Viterbi scoring, <16ms, off-main-thread)
- * - Google Fonts via FontRepository (opt-in, HTTPS, cached)
- * - SMS Retriever for OTP auto-paste (OtpManager + OtpSmsReceiver, 4–8 digits, 5-min expiry, never clipboard/disk)
- * - ScreenshotDetector for contextual ToolbarState.Idle chip
+ * Phase 2: GlideTypingEngine (Viterbi), Google Fonts (FontRepository), SMS Retriever OTP, ScreenshotDetector.
+ * Phase 3: SmartReplyEngine (ML Kit on-device, opt-in), GifRepository (Giphy HTTPS, opt-in), OneHandedPrefs.
  *
  * Legacy MyKeyboardService remains as alias for one release to avoid breakage.
  */
@@ -46,6 +47,11 @@ class BabelImeService : InputMethodService() {
     private lateinit var otpManager: OtpManager
     private lateinit var screenshotDetector: ScreenshotDetector
     private var otpReceiver: OtpSmsReceiver? = null
+    // Phase 3
+    private lateinit var smartReplyEngine: SmartReplyEngine
+    private lateinit var gifRepository: GifRepository
+    private lateinit var oneHandedPrefs: OneHandedPrefs
+    private lateinit var networkPolicy: NetworkPolicy
 
     override fun onCreate() {
         super.onCreate()
@@ -63,8 +69,12 @@ class BabelImeService : InputMethodService() {
         glideEngine = GlideTypingEngine(dicts)
         otpManager = OtpManager()
         screenshotDetector = ScreenshotDetector(applicationContext)
+        networkPolicy = NetworkPolicy(prefs)
+        smartReplyEngine = SmartReplyEngine(applicationContext, prefs, networkPolicy)
+        gifRepository = GifRepository(prefs, networkPolicy) { prefs.encryptedPrefs.getString("giphy_api_key", null) }
+        oneHandedPrefs = OneHandedPrefs(prefs)
         lifecycleDelegate.onCreate()
-        // Phase 2: start OTP retriever + screenshot watcher
+        // Phase 2/3: start OTP retriever + screenshot watcher
         startSmsRetriever()
         screenshotDetector.start()
     }
@@ -101,6 +111,7 @@ class BabelImeService : InputMethodService() {
         lifecycleDelegate.onDestroy()
         screenshotDetector.stop()
         otpReceiver?.let { try { unregisterReceiver(it) } catch (_: Exception) {} }
+        try { smartReplyEngine.close() } catch (_: Exception) {}
     }
 
     private fun startSmsRetriever() {

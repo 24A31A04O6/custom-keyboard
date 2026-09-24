@@ -37,7 +37,8 @@ fun ToolbarRow(
                         }
                     }
                     is ToolbarState.Expanded -> Row(horizontalArrangement = Arrangement.spacedBy(8.dp)) {
-                        listOf("Sticker","GIF","Translate","Theme","Clipboard","Settings").forEach { t ->
+                        // Phase 3: full tool row — stickers, GIF, settings, translate, theme, clipboard, one-handed mode; long-press to reorder (handled by ToolbarEditor)
+                        listOf("Sticker","GIF","Translate","Theme","Clipboard","One-handed","Settings").forEach { t ->
                             SuggestionChip(onClick = { onToolClick(t) }, label = { Text(t) })
                         }
                     }

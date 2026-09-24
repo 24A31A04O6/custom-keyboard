@@ -43,9 +43,9 @@ Owner should replace this section with an SPDX identifier.
   Text: "The Software shall be used for Good, not Evil."
   Note: retained only for JVM unit tests; Android bundles its own org.json.
 
-- Google ML Kit Smart Reply 17.0.4 (Phase 3, gated OFF in Phase 1)
+- Google ML Kit Smart Reply 17.0.4 (Phase 3 — on-device TFLite, offline by default, opt-in disclosure)
   License: Google ML Kit Terms (https://developers.google.com/ml-kit/terms)
-  Not Apache 2.0; provider disclosed in Settings when enabled.
+  Not Apache 2.0; provider "Google ML Kit (on-device)" disclosed in Settings → Smart replies. On-device inference sends no data off device; online fallback (if ever added) would be HTTPS to a named provider and is also opt-in.
 
 - Google Play Services Auth API Phone — SMS Retriever (Phase 2, play-services-auth:20.7.0)
   License: Google Play Services Terms (https://developers.google.com/terms)
@@ -76,11 +76,11 @@ A copy of the Apache License 2.0 is included below for attribution compliance.
 4. Emoji / Fonts / GIF SDK
 ---------------------------
 - Emoji codePoints in EmojiKeyboardView.java are raw Unicode scalar values
-  (public domain code points). No Noto Color Emoji font file is bundled in
-  Phase 1; if added later, its license (Apache 2.0 / SIL OFL) will be added here.
-- Google Fonts (Phase 2) — each font ships under its own SIL OFL / Apache 2.0;
-  attribution will be appended per font when enabled.
-- GIF/sticker SDK (Phase 3) — provider not yet chosen; row will be added before use.
+  (public domain code points). No Noto Color Emoji font file is bundled; if added later, Apache 2.0 / SIL OFL.
+- Google Fonts (Phase 2) — each font SIL OFL / Apache 2.0 per font.
+- GIF/sticker — Phase 3 provider: Giphy (https://giphy.com) via HTTPS API (api.giphy.com). No SDK bundled; plain HTTPS search using api.giphy.com. Giphy content under Giphy Terms of Service (https://giphy.com/legal) — user content. Attribution "Powered by Giphy" displayed in GifPanel. API key via BuildConfig.giphyApiKey (not hard-coded). No GIF fetch unless user opts in (default OFF).
+- Sticker — Phase 3 local set (12 built-in emojis) + online stickers share GIF opt-in (same Giphy provider).
+- One-handed mode — no third-party asset; pure layout.
 
 ========================================================================
 If you add any new third-party asset, update this LICENSE file and NOTICE.

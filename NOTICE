@@ -1,0 +1,36 @@
+BabelKey — NOTICE file (required attribution per licenses)
+============================================================
+
+This product includes software from the following projects:
+
+1. AOSP LatinIME (Apache 2.0)
+   Copyright The Android Open Source Project.
+   https://github.com/aosp-mirror/platform_packages_inputmethods_LatinIME
+   Licensed under the Apache License 2.0.
+
+2. AndroidX / Jetpack (Apache 2.0)
+   Copyright The Android Open Source Project.
+   https://github.com/androidx/androidx
+   Licensed under the Apache License 2.0.
+
+3. Jetpack Compose (Apache 2.0)
+   Copyright The Android Open Source Project.
+
+4. Jetpack Security (Apache 2.0)
+   androidx.security:security-crypto
+
+5. Kotlin & Coroutines (Apache 2.0)
+   Copyright JetBrains s.r.o. and contributors.
+
+6. org.json (JSON License — test only, not shipped in APK)
+   Copyright (c) 2002 JSON.org
+   Permission is hereby granted ... "The Software shall be used for Good, not Evil."
+
+7. Google ML Kit Smart Reply (Google ML Kit Terms — Phase 3 only, gated OFF)
+   Copyright Google LLC.
+
+If this APK is distributed, a copy of the Apache License 2.0 must accompany it
+(see LICENSE file).
+
+Emoji: Unicode code points are not copyrighted; no additional notice required
+for Phase 1. Future font/image assets will add their notices here.

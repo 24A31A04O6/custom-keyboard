@@ -1,0 +1,44 @@
+{
+  "autocorrect_dict.json": {
+    "bytes": 4129,
+    "sha256": "dc1993accc1027a627c513a148ce6eec88d2ac678a318f3de7fd5974bd956b52",
+    "md5": "5e27b3a85fc6661440d7dccb68fda658",
+    "entries": 171
+  },
+  "emoji_suggestions.json": {
+    "bytes": 996,
+    "sha256": "36cd8a60ec2926b278ddf0516a86f6be6a50dabf6408d2263daefb9f949933e0",
+    "md5": "019752535e5d20d333c1ca6f17431837",
+    "entries": 29
+  },
+  "eng_dict.json": {
+    "bytes": 85750,
+    "sha256": "60792451300d1948489f3ed1dd5f616ad202527619941a8f16b2a46e9217dd25",
+    "md5": "1c682d0dacaa06a8042def93a19e6277",
+    "entries": 2010
+  },
+  "suggestions_dict.json": {
+    "bytes": 856,
+    "sha256": "efd90b29d447ca42f8e7e71ed8b653280a02ec5fc815acde2c22fcbea6174c88",
+    "md5": "cb216139548f913d3fb4681d77ba8d36",
+    "entries": 19
+  },
+  "tel_eng_dict.json": {
+    "bytes": 81265,
+    "sha256": "0b23934af311b6539afe4a30c50ec8593ba1a5da0f04ee5ac88e83ccebc72f84",
+    "md5": "023b3e46936b6aac6f5e2a85779d83a6",
+    "entries": 1757
+  },
+  "telugu_dict.json": {
+    "bytes": 3089,
+    "sha256": "e05b1c1034bc457c8a39cf2aa04ec688e650bca3873b7635941d0633fca4ac42",
+    "md5": "cd78cdffcd4537d0c073c599c5b87ca8",
+    "entries": 62
+  },
+  "translations.json": {
+    "bytes": 27667,
+    "sha256": "77ee7b79582e54fcded6447c5a1c8da61a950026737e8845012c0d8e5c89a5ea",
+    "md5": "23a0314e13324b027632e5a5c65e7838",
+    "entries": 1199
+  }
+}

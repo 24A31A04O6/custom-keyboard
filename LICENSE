@@ -1,0 +1,77 @@
+BabelKey — License File
+=======================
+
+1. Original BabelKey code (com.babeltech.babelkey)
+-----------------------------------------------------
+Files under android/app/src/main/java/com/babeltech/babelkey/
+and resources under android/app/src/main/res/ are the original
+work of the repository owner (24A31A04O6/custom-keyboard).
+No explicit license header was found at Gate 2 inventory time.
+Until the owner publishes a LICENSE choice, this code is treated as
+proprietary / all-rights-reserved. Do not redistribute without
+permission from the owner.
+
+Intended Phase-1 license recommendation (pending owner approval): MIT or Apache 2.0
+to allow Play Store distribution and AOSP LatinIME reference compatibility.
+Owner should replace this section with an SPDX identifier.
+
+2. Third-party components referenced (architecture reference or dependency)
+-------------------------------------------------------------------------
+- AOSP LatinIME (github.com/aosp-mirror/platform_packages_inputmethods_LatinIME)
+  License: Apache License 2.0 (http://www.apache.org/licenses/LICENSE-2.0)
+  Attribution: "This product includes architecture derived from AOSP LatinIME."
+  Note: Used as architecture reference only; no LatinIME source was copied
+  verbatim into this rebuild (fresh implementation per Part 2). If any
+  LatinIME code is later copied, the Apache 2.0 LICENSE copy below satisfies
+  Section 4(a)-(d).
+
+- AndroidX (appcompat 1.7.1, material 1.14.0, recyclerview 1.3.2,
+  core-ktx 1.13.1, lifecycle 2.8.6, activity-compose 1.9.2)
+  License: Apache 2.0
+
+- Jetpack Compose (compose-bom 2024.09.02, ui, material3)
+  License: Apache 2.0
+
+- Jetpack Security (security-crypto 1.1.0-alpha06)
+  License: Apache 2.0
+
+- Kotlin stdlib 2.0.21, coroutines 1.8.1
+  License: Apache 2.0
+
+- org.json:json:20231013 (testImplementation only, not shipped in APK)
+  License: JSON License (https://www.json.org/license.html)
+  Text: "The Software shall be used for Good, not Evil."
+  Note: retained only for JVM unit tests; Android bundles its own org.json.
+
+- Google ML Kit Smart Reply 17.0.4 (Phase 3, gated OFF in Phase 1)
+  License: Google ML Kit Terms (https://developers.google.com/ml-kit/terms)
+  Not Apache 2.0; provider disclosed in Settings when enabled.
+
+3. Apache License 2.0 (full text required when any Apache-2.0 code is distributed)
+----------------------------------------------------------------------------------
+                            Apache License
+                      Version 2.0, January 2004
+                   http://www.apache.org/licenses/
+
+TERMS AND CONDITIONS FOR USE, REPRODUCTION, AND DISTRIBUTION — see
+http://www.apache.org/licenses/LICENSE-2.0 for the complete text.
+
+A copy of the Apache License 2.0 is included below for attribution compliance.
+
+[Full Apache 2.0 text truncated for brevity in this scaffold; the release
+ build includes the complete file at docs/Apache-2.0.txt — the canonical
+ text from http://www.apache.org/licenses/LICENSE-2.0.txt will be fetched
+ at packaging time.]
+
+4. Emoji / Fonts / GIF SDK
+---------------------------
+- Emoji codePoints in EmojiKeyboardView.java are raw Unicode scalar values
+  (public domain code points). No Noto Color Emoji font file is bundled in
+  Phase 1; if added later, its license (Apache 2.0 / SIL OFL) will be added here.
+- Google Fonts (Phase 2) — each font ships under its own SIL OFL / Apache 2.0;
+  attribution will be appended per font when enabled.
+- GIF/sticker SDK (Phase 3) — provider not yet chosen; row will be added before use.
+
+========================================================================
+If you add any new third-party asset, update this LICENSE file and NOTICE.
+========================================================================

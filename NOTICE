@@ -29,8 +29,15 @@ This product includes software from the following projects:
 7. Google ML Kit Smart Reply (Google ML Kit Terms — Phase 3 only, gated OFF)
    Copyright Google LLC.
 
+8. Google Play Services Auth API Phone — SMS Retriever (Phase 2)
+   Copyright Google LLC. https://developers.google.com/identity/sms-retriever
+
+9. Google Fonts via Play Services Fonts / Compose Google Fonts (Phase 2, opt-in)
+   Copyright respective font authors; most under SIL OFL 1.1 or Apache 2.0.
+
 If this APK is distributed, a copy of the Apache License 2.0 must accompany it
 (see LICENSE file).
 
 Emoji: Unicode code points are not copyrighted; no additional notice required
-for Phase 1. Future font/image assets will add their notices here.
+for Phase 1. Phase 2 fonts are downloaded on demand over HTTPS; their individual
+SIL OFL / Apache 2.0 notices will be appended when a font is chosen.

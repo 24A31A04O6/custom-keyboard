@@ -47,6 +47,16 @@ Owner should replace this section with an SPDX identifier.
   License: Google ML Kit Terms (https://developers.google.com/ml-kit/terms)
   Not Apache 2.0; provider disclosed in Settings when enabled.
 
+- Google Play Services Auth API Phone — SMS Retriever (Phase 2, play-services-auth:20.7.0)
+  License: Google Play Services Terms (https://developers.google.com/terms)
+  No RECEIVE_SMS permission; hash documented in docs/OTP_APP_HASH.md.
+
+- AndroidX Compose Google Fonts (androidx.compose.ui:ui-text-google-fonts) (Phase 2, compose BOM)
+  License: Apache 2.0 — provider com.google.android.gms.fonts, downloads over HTTPS, cached.
+
+- Google Fonts files (Poppins, Noto Sans Telugu, Inter, Roboto Slab) (Phase 2, opt-in)
+  License: SIL Open Font License 1.1 / Apache 2.0 per font — will be listed per font when download wiring enabled; no font file bundled in Phase 2 scaffold.
+
 3. Apache License 2.0 (full text required when any Apache-2.0 code is distributed)
 ----------------------------------------------------------------------------------
                             Apache License

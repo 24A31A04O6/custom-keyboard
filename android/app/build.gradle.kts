@@ -88,6 +88,12 @@ dependencies {
     // Jetpack Security — EncryptedSharedPreferences per spec
     implementation(libs.security.crypto)
 
+    // Compose Google Fonts (Phase 2 — opt-in, HTTPS)
+    implementation(libs.compose.ui.text.google.fonts)
+
+    // Play Services Auth API Phone — SMS Retriever for OTP (Phase 2)
+    implementation(libs.play.services.auth.api.phone)
+
     // ML Kit Smart Reply — on-device (Phase 3, kept but stubbed in Phase 1)
     // Keep as implementation so the class resolves, but feature is gated OFF by default
     implementation("com.google.mlkit:smart-reply:17.0.4")

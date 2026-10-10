@@ -45,6 +45,66 @@
             android:paddingTop="8dp"
             android:paddingBottom="24dp">
 
+            <!-- ══ Keyboard Setup / Activation Card ═══════════════════ -->
+            <LinearLayout
+                android:id="@+id/card_activation"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:orientation="vertical"
+                android:layout_marginStart="16dp"
+                android:layout_marginEnd="16dp"
+                android:layout_marginTop="8dp"
+                android:layout_marginBottom="16dp"
+                android:background="#23272C"
+                android:padding="16dp">
+
+                <TextView
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:text="⌨️ Keyboard Setup"
+                    android:textSize="16sp"
+                    android:textStyle="bold"
+                    android:textColor="#FFFFFF"/>
+
+                <TextView
+                    android:id="@+id/status_activation"
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:layout_marginTop="4dp"
+                    android:text="Enable BabelKey in your device settings to start typing"
+                    android:textSize="12sp"
+                    android:textColor="#B0B8C4"/>
+
+                <LinearLayout
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:orientation="horizontal"
+                    android:layout_marginTop="12dp">
+
+                    <Button
+                        android:id="@+id/btn_enable_keyboard"
+                        android:layout_width="0dp"
+                        android:layout_height="40dp"
+                        android:layout_weight="1"
+                        android:layout_marginEnd="6dp"
+                        android:text="1. Enable"
+                        android:textSize="12sp"
+                        android:backgroundTint="#1976D2"
+                        android:textColor="#FFFFFF"/>
+
+                    <Button
+                        android:id="@+id/btn_switch_keyboard"
+                        android:layout_width="0dp"
+                        android:layout_height="40dp"
+                        android:layout_weight="1"
+                        android:layout_marginStart="6dp"
+                        android:text="2. Select"
+                        android:textSize="12sp"
+                        android:backgroundTint="#388E3C"
+                        android:textColor="#FFFFFF"/>
+                </LinearLayout>
+            </LinearLayout>
+
             <!-- ══ General ══════════════════════════════════════════════ -->
 
             <!-- Languages row -->

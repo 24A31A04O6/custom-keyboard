@@ -41,7 +41,7 @@ EXPECTED_COUNTS = {
 }
 
 def sha256(p: pathlib.Path) -> str:
-    return hashlib.sha256(p.read_bytes()).hexdigest()
+    return hashlib.sha256(p.read_bytes().replace(b"\r\n", b"\n")).hexdigest()
 
 def validate_shape(path: pathlib.Path):
     obj = json.loads(path.read_bytes().decode("utf-8"))
@@ -97,7 +97,7 @@ def main():
     for name in EXPECTED_SHA256:
         src = SRC / name
         dst = DST / name
-        dst.write_bytes(src.read_bytes())
+        dst.write_bytes(src.read_bytes().replace(b"\r\n", b"\n"))
         info_sha = sha256(dst)
         kind, cnt = validate_shape(dst)
         manifest[name] = {"bytes": dst.stat().st_size, "sha256": info_sha, "entries": cnt, "kind": kind}

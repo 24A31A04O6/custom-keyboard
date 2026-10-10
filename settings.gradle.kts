@@ -22,6 +22,7 @@ dependencyResolutionManagement {
     }
 }
 
-rootProject.name = "keyboard 2"
+rootProject.name = "BabelKey"
 include(":app")
+project(":app").projectDir = file("android/app")
  

@@ -7,7 +7,7 @@ JAVA = os.path.join(ROOT, "java")
 RES = os.path.join(ROOT, "res")
 
 refs = {}  # type -> set(names)
-ref_re = re.compile(r"\bR\.(id|drawable|color|xml|layout|string|array|raw|style|mipmap|dimen)\.([A-Za-z0-9_]+)")
+ref_re = re.compile(r"(?<!android\.)\bR\.(id|drawable|color|xml|layout|string|array|raw|style|mipmap|dimen)\.([A-Za-z0-9_]+)")
 for f in glob.glob(os.path.join(JAVA, "**", "*.java"), recursive=True):
     src = open(f, encoding="utf-8", errors="replace").read()
     for m in ref_re.finditer(src):

@@ -35,9 +35,9 @@ android {
         release {
             isMinifyEnabled = true
             isShrinkResources = true
-            // Only sign with release keystore if present; otherwise use debug signing for local builds
+            // Sign with release keystore if present, otherwise fallback to debug signing so APK installs
             val ks = file(System.getenv("BABELKEY_KEYSTORE") ?: "babelkey.jks")
-            if (ks.exists()) signingConfig = signingConfigs.getByName("release")
+            signingConfig = signingConfigs.getByName(if (ks.exists()) "release" else "debug")
             proguardFiles(
                 getDefaultProguardFile("proguard-android-optimize.txt"),
                 "proguard-rules.pro"

@@ -688,7 +688,7 @@ public class MyKeyboardService extends InputMethodService
             case "phrases":     suggManager.togglePhrases();     break;
             case "stats":       suggManager.toggleStats();       break;
             case "settings":
-            case "theme":       launchSettingsActivity();        break;
+            case "theme":       toggleSettings();                break;
             case "voice":       voiceManager.handleVoiceTyping(); break;
         }
     }
@@ -710,6 +710,9 @@ public class MyKeyboardService extends InputMethodService
         if (clipManager     != null) clipManager.hideDrawer();
         if (symbolPopup     != null) symbolPopup.dismiss();
         closeTBCustomizer();
+        if (contentFlipper != null && contentFlipper.getDisplayedChild() == FLIPPER_THEME) {
+            flipTo(FLIPPER_KB);
+        }
     }
     private void launchSettingsActivity() {
         try {
@@ -722,10 +725,23 @@ public class MyKeyboardService extends InputMethodService
             toggleSettings();
         }
     }
-    private void toggleSettings() { if (settingsPanel == null) return; boolean v = settingsPanel.getVisibility() == View.VISIBLE; settingsPanel.setVisibility(v ? View.GONE : View.VISIBLE); }
+    private void toggleSettings() {
+        if (contentFlipper == null) return;
+        if (contentFlipper.getDisplayedChild() == FLIPPER_THEME) {
+            flipTo(FLIPPER_KB);
+        } else {
+            hideAllPanels();
+            flipTo(FLIPPER_THEME);
+        }
+    }
 
     private void wireSettingsPanel() {
         if (keyboardRoot == null) return;
+        View bOpenFull = keyboardRoot.findViewById(R.id.btn_open_full_settings);
+        if (bOpenFull != null) bOpenFull.setOnClickListener(v -> launchSettingsActivity());
+        View bClose = keyboardRoot.findViewById(R.id.btn_close_settings_panel);
+        if (bClose != null) bClose.setOnClickListener(v -> flipTo(FLIPPER_KB));
+
         View bl  = keyboardRoot.findViewById(R.id.theme_light);         if (bl  != null) bl.setOnClickListener(v  -> themeManager.setTheme(ThemeManager.THEME_LIGHT));
         View bdk = keyboardRoot.findViewById(R.id.theme_dark);          if (bdk != null) bdk.setOnClickListener(v -> themeManager.setTheme(ThemeManager.THEME_DARK));
         View bb  = keyboardRoot.findViewById(R.id.theme_black);         if (bb  != null) bb.setOnClickListener(v  -> themeManager.setTheme(ThemeManager.THEME_BLACK));
@@ -742,6 +758,11 @@ public class MyKeyboardService extends InputMethodService
         View scr = keyboardRoot.findViewById(R.id.sound_crystal);   if (scr != null) scr.setOnClickListener(v -> { soundManager.setSoundPack(SoundHapticManager.SOUND_CRYSTAL);   soundManager.playKeySound(); Toast.makeText(this, "Sound: Crystal",    Toast.LENGTH_SHORT).show(); });
         SeekBar vb = keyboardRoot.findViewById(R.id.volume_seekbar);
         if (vb != null) { vb.setProgress(soundManager.getVolume()); vb.setOnSeekBarChangeListener(new SeekBar.OnSeekBarChangeListener() { @Override public void onProgressChanged(SeekBar s, int p, boolean f) { soundManager.setVolume(p); } @Override public void onStartTrackingTouch(SeekBar s) {} @Override public void onStopTrackingTouch(SeekBar s) {} }); }
+        View bnum = keyboardRoot.findViewById(R.id.toggle_number_row);
+        if (bnum != null) bnum.setOnClickListener(v -> {
+            if (currentMode == MODE_NUMPAD) switchToQwerty();
+            else switchToNumpad();
+        });
         View bsw = keyboardRoot.findViewById(R.id.toggle_swipe_typing);
         if (bsw != null) bsw.setOnClickListener(v -> { swipeEnabled = !swipeEnabled; prefs.edit().putBoolean(PREF_SWIPE, swipeEnabled).apply(); Toast.makeText(this, "Swipe typing " + (swipeEnabled ? "ON" : "OFF"), Toast.LENGTH_SHORT).show(); });
         View bai = keyboardRoot.findViewById(R.id.toggle_ai_replies);
@@ -860,24 +881,42 @@ public class MyKeyboardService extends InputMethodService
     }
     private void flipTo(int child) {
         if (contentFlipper == null) return;
-        if (keyboardView != null && keyboardView.getHeight() > 0) { android.view.ViewGroup.LayoutParams lp = contentFlipper.getLayoutParams(); lp.height = (child != FLIPPER_KB) ? keyboardView.getHeight() : android.view.ViewGroup.LayoutParams.WRAP_CONTENT; contentFlipper.setLayoutParams(lp); }
-        if (child == FLIPPER_KB) { keyboardView.setVisibility(View.VISIBLE); if (emojiFlipperHost != null && emojiPanel != null) { emojiFlipperHost.removeView(emojiPanel); emojiPanel = null; emojiKeyboardView = null; } }
-        contentFlipper.setDisplayedChild(child); highlightIcon(child);
+        if (keyboardView != null && keyboardView.getHeight() > 0) {
+            android.view.ViewGroup.LayoutParams lp = contentFlipper.getLayoutParams();
+            lp.height = (child != FLIPPER_KB) ? keyboardView.getHeight() : android.view.ViewGroup.LayoutParams.WRAP_CONTENT;
+            contentFlipper.setLayoutParams(lp);
+        }
+        if (child == FLIPPER_KB) {
+            keyboardView.setVisibility(View.VISIBLE);
+            if (settingsPanel != null) settingsPanel.setVisibility(View.GONE);
+            if (emojiFlipperHost != null && emojiPanel != null) {
+                emojiFlipperHost.removeView(emojiPanel);
+                emojiPanel = null;
+                emojiKeyboardView = null;
+            }
+        } else if (child == FLIPPER_THEME) {
+            if (settingsPanel != null) {
+                settingsPanel.setVisibility(View.VISIBLE);
+                android.view.ViewGroup.LayoutParams slp = settingsPanel.getLayoutParams();
+                if (slp != null && keyboardView != null && keyboardView.getHeight() > 0) {
+                    slp.height = keyboardView.getHeight();
+                    settingsPanel.setLayoutParams(slp);
+                }
+            }
+        }
+        contentFlipper.setDisplayedChild(child);
+        highlightIcon(child);
     }
-    /** Highlight the toolbar icon that corresponds to the currently active panel.
-     *  Flipper children:  0=KB  1=Emoji  2=Theme  3=Misc
-     *  Icon array order:  0=Grid  1=Emoji  2=Cursor  3=Gif  4=Clipboard  5=Translate  6=Mic  7=More
-     */
     /** Highlight the toolbar icon for the currently active panel. */
     private void highlightIcon(int active) {
         if (keyboardRoot == null) return;
-        String key = (active == FLIPPER_EMOJI) ? "emoji" : null;
+        String key = (active == FLIPPER_EMOJI) ? "emoji" : (active == FLIPPER_THEME) ? "settings" : null;
         int ac = androidx.core.content.ContextCompat.getColor(this, R.color.toolbar_icon_active);
         int ic = androidx.core.content.ContextCompat.getColor(this, R.color.toolbar_icon_inactive);
         for (java.util.Map.Entry<String, View> e : tbBtnViews.entrySet()) {
             if (e.getValue() instanceof android.widget.ImageView) {
-                ((android.widget.ImageView) e.getValue()).setColorFilter(
-                    (key != null && key.equals(e.getKey())) ? ac : ic);
+                boolean match = (key != null && (key.equals(e.getKey()) || ("settings".equals(key) && "theme".equals(e.getKey()))));
+                ((android.widget.ImageView) e.getValue()).setColorFilter(match ? ac : ic);
             }
         }
         highlightClipboard(isDrawerOpen());

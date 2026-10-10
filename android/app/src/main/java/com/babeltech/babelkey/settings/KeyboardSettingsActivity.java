@@ -59,6 +59,31 @@ public class KeyboardSettingsActivity extends AppCompatActivity {
                 }
             }
 
+            // ── Activation Card Wiring ─────────────────────────────────────────
+            android.widget.Button btnEnable = findViewById(R.id.btn_enable_keyboard);
+            if (btnEnable != null) {
+                btnEnable.setOnClickListener(v -> {
+                    try {
+                        startActivity(new Intent(android.provider.Settings.ACTION_INPUT_METHOD_SETTINGS));
+                    } catch (Exception ex) {
+                        Toast.makeText(this, "Please enable BabelKey in Settings", Toast.LENGTH_LONG).show();
+                    }
+                });
+            }
+
+            android.widget.Button btnSwitch = findViewById(R.id.btn_switch_keyboard);
+            if (btnSwitch != null) {
+                btnSwitch.setOnClickListener(v -> {
+                    try {
+                        android.view.inputmethod.InputMethodManager imm =
+                            (android.view.inputmethod.InputMethodManager) getSystemService(INPUT_METHOD_SERVICE);
+                        if (imm != null) imm.showInputMethodPicker();
+                    } catch (Exception ex) {
+                        Toast.makeText(this, "Could not open keyboard selector", Toast.LENGTH_SHORT).show();
+                    }
+                });
+            }
+
             // ── Custom background toggle switch ───────────────────────────────
             SwitchCompat swCustomBg = findViewById(R.id.switch_custom_bg);
             if (swCustomBg != null) {

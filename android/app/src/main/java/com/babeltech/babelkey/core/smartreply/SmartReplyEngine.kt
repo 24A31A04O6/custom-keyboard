@@ -5,7 +5,8 @@ import com.babeltech.babelkey.data.preferences.PreferencesRepository
 import com.babeltech.babelkey.security.NetworkPolicy
 import com.google.mlkit.nl.smartreply.SmartReply
 import com.google.mlkit.nl.smartreply.TextMessage
-import kotlinx.coroutines.tasks.await
+import kotlinx.coroutines.Dispatchers
+import kotlinx.coroutines.withContext
 
 /**
  * SmartReplyEngine — Phase 3 AI / smart replies (opt-in, provider named, HTTPS).
@@ -60,7 +61,9 @@ class SmartReplyEngine(
             val conversation = listOf(
                 TextMessage.createForRemoteUser(contextText.trim(), System.currentTimeMillis(), "remote")
             )
-            val result = generator.suggestReplies(conversation).await()
+            val result = withContext(Dispatchers.IO) {
+                com.google.android.gms.tasks.Tasks.await(generator.suggestReplies(conversation))
+            }
             when (result.status) {
                 com.google.mlkit.nl.smartreply.SmartReplySuggestionResult.STATUS_SUCCESS -> {
                     val replies = result.suggestions.map { it.text }
@@ -75,12 +78,9 @@ class SmartReplyEngine(
 
     /** Public entry: respects opt-in. Offline path if not opted in, online fallback if opted in (stub). */
     suspend fun generate(contextText: String, allowOnline: Boolean = false): List<String> {
-        if (!isEnabled()) return generateOnDevice(contextText) // respects OFF default but still provides on-device replies if enabled? spec says opt-in — check prefs
-        // If user has opted in and allows online, we could hit HTTPS API — currently stubbed to on-device to avoid shipping API keys
+        if (!isEnabled()) return generateOnDevice(contextText)
         if (allowOnline && networkPolicy.isAiRepliesAllowed()) {
             networkPolicy.requireHttps("https://generativelanguage.googleapis.com")
-            // TODO: HTTPS call to provider with `text = contextText` — not shipped in v1 to avoid API key in repo
-            // Fall back to on-device for now
         }
         return generateOnDevice(contextText)
     }

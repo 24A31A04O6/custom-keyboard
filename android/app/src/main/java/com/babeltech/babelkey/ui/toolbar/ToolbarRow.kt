@@ -12,6 +12,7 @@ import androidx.compose.ui.unit.dp
  * ToolbarRow — adaptive single row, 3 states with instant, smooth transitions (no flicker).
  * Uses AnimatedContent for state switches at <16ms.
  */
+@OptIn(ExperimentalAnimationApi::class)
 @Composable
 fun ToolbarRow(
     state: ToolbarState,
@@ -27,7 +28,7 @@ fun ToolbarRow(
         IconButton(onClick = onGridToggle) { Text("⊞") } // grid toggle
         Box(modifier = Modifier.weight(1f), contentAlignment = Alignment.Center) {
             AnimatedContent(targetState = state, transitionSpec = {
-                fadeIn() with fadeOut()
+                fadeIn() togetherWith fadeOut()
             }, label = "toolbar") { s ->
                 when (s) {
                     is ToolbarState.Idle -> SuggestionChip(onClick = {}, label = { Text("Screenshot") })

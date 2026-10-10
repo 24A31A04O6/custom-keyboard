@@ -15,11 +15,15 @@ import java.security.MessageDigest
  */
 object SmsRetrieverHelper {
 
-    fun getAppHash(context: Context): String? = try {
-        val pkg = context.packageName
-        val sig = getSigningCertSha256Hex(context) ?: return null
-        computeHash(pkg, sig)
-    } catch (_: Exception) { null }
+    fun getAppHash(context: Context): String? {
+        return try {
+            val pkg = context.packageName
+            val sig = getSigningCertSha256Hex(context) ?: return null
+            computeHash(pkg, sig)
+        } catch (_: Exception) {
+            null
+        }
+    }
 
     fun computeHash(packageName: String, certHex: String): String {
         val appInfo = "$packageName $certHex"
@@ -31,15 +35,19 @@ object SmsRetrieverHelper {
         return hash
     }
 
-    private fun getSigningCertSha256Hex(context: Context): String? = try {
-        val pm = context.packageManager
-        val pkg = pm.getPackageInfo(context.packageName, PackageManager.GET_SIGNING_CERTIFICATES)
-        val sigs = pkg.signingInfo?.apkContentsSigners ?: return null
-        if (sigs.isEmpty()) return null
-        val cert = sigs[0].toByteArray()
-        val md = MessageDigest.getInstance("SHA-256")
-        md.digest(cert).joinToString("") { "%02x".format(it) }
-    } catch (_: Exception) { null }
+    private fun getSigningCertSha256Hex(context: Context): String? {
+        return try {
+            val pm = context.packageManager
+            val pkg = pm.getPackageInfo(context.packageName, PackageManager.GET_SIGNING_CERTIFICATES)
+            val sigs = pkg.signingInfo?.apkContentsSigners ?: return null
+            if (sigs.isEmpty()) return null
+            val cert = sigs[0].toByteArray()
+            val md = MessageDigest.getInstance("SHA-256")
+            md.digest(cert).joinToString("") { "%02x".format(it) }
+        } catch (_: Exception) {
+            null
+        }
+    }
 
     /** Returns a formatted SMS sample showing where the hash should appear. */
     fun sampleSms(otp: String, hash: String): String =

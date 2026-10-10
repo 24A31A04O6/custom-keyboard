@@ -44,11 +44,9 @@ object OtpDetector {
         val clazz = inputType and android.text.InputType.TYPE_MASK_CLASS
         val isNumberClass = clazz == android.text.InputType.TYPE_CLASS_NUMBER
         val isPassword = (inputType and android.text.InputType.TYPE_TEXT_VARIATION_PASSWORD) == android.text.InputType.TYPE_TEXT_VARIATION_PASSWORD
-        val hints = editorInfo.autofillHints?.toList() ?: emptyList()
-        val maxLen = try {
-            // Try to read InputFilter.LengthFilter max via reflection on EditorInfo extras if present
-            null
-        } catch (_: Exception) { null }
-        return isEligible(FieldInfo(isNumberClass, inputType, maxLen, hints as List<String>, isPassword))
+        val hint = editorInfo.hintText?.toString() ?: ""
+        val hints = if (hint.isNotEmpty()) listOf(hint) else emptyList<String>()
+        val maxLen: Int? = null
+        return isEligible(FieldInfo(isNumberClass, inputType, maxLen, hints, isPassword))
     }
 }
